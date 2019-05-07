@@ -1,0 +1,7 @@
+[package]
+name = "lexer"
+version = "0.1.0"
+authors = ["root"]
+edition = "2018"
+
+[dependencies]
