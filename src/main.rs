@@ -8,11 +8,6 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
     let file = File::open("stone/demo.txt").expect("未能打开文件");
-    let lexer = Lexer{
-        regex: String::from("asdas"),
-        read: file,
-        has_more: true
-    };
-
+    let lexer = Lexer::new(String::from("123"), file);
     lexer.read();
 }

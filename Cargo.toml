@@ -5,3 +5,4 @@ authors = ["root"]
 edition = "2018"
 
 [dependencies]
+queues = "1.0.0"
