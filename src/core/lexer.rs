@@ -26,14 +26,12 @@ impl Lexer{
         };
     }
 
-    pub fn read(self){
+    pub fn read(mut self){
         let fin = BufReader::new(self.read);
         for line in fin.lines() {
-            println!("行：{}", line.unwrap());
+            self.queue.add(line.unwrap());
         }
         // let xxx = Token::new(10);
-        println!("查看换行{}", Token::EOL);
-        println!("查看换行成功");
-
+        println!("查看队列结构：{:#?}", self.queue);
     }
 }

@@ -4,13 +4,13 @@
 name = "lexer"
 version = "0.1.0"
 dependencies = [
- "queues 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "queues 1.1.0 (registry+https://mirrors.ustc.edu.cn/crates.io-index/)",
 ]
 
 [[package]]
 name = "queues"
 version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "registry+https://mirrors.ustc.edu.cn/crates.io-index/"
 
 [metadata]
-"checksum queues 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1475abae4f8ad4998590fe3acfe20104f0a5d48fc420c817cd2c09c3f56151f0"
+"checksum queues 1.1.0 (registry+https://mirrors.ustc.edu.cn/crates.io-index/)" = "1475abae4f8ad4998590fe3acfe20104f0a5d48fc420c817cd2c09c3f56151f0"
