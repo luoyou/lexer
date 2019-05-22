@@ -8,4 +8,5 @@ while i < 10 {
         odd = odd + i
     }
 }
+// 这是注释。汉字的解析情况
 even + odd
