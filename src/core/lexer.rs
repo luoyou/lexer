@@ -13,7 +13,7 @@ pub struct Lexer {
 
     has_more: bool,      // 读入的文件是否还有未读的内容
 
-    cur_line: Vec<u8>, // 当前行
+    // cur_line: Chars, // 当前行
     line_num: u32,     // 当前行号
 }
 
@@ -23,30 +23,42 @@ impl Lexer{
             regex: regex,  // 正则字符串
             read: read,     // 读入的文件
             has_more: true,
-            cur_line: Vec::<u8>::new()，
+            // cur_line: "".chars(),
             line_num: 0
         };
     }
 
     pub fn read(mut self){
-        self.get_char();
+        // self.get_char();
+        self.test()
     }
 
-    fn get_char(mut self){
-        let mut f = BufReader::new(&self.read);
+    // fn get_char(mut self)->Option<char>{
+    //     let mut f = BufReader::new(&self.read);
+    //     if !self.has_more {
+    //         return None;
+    //     } else {
+    //         let mut line = Vec::<u8>::new();
+    //         if f.read_until(b'\n', &mut line).expect("read_until 函数调用失败") != 0 {
+    //             // this moves the ownership of the read data to s
+    //             // there is no allocation
+    //             let mut xxx = String::from_utf8(line).expect("from_utf8 函数调用失败").chars();
+    //             return xxx.next();
+    //         }else{
+    //             return None;
+    //         }
+    //     }
+    // }
 
-        while f.read_until(b'\n', &mut self.cur_line).expect("read_until 函数调用失败") != 0 {
+    fn test(self){
+        let mut f = BufReader::new(&self.read);
+        let mut line = Vec::<u8>::new();
+        if f.read_until(b'\n', &mut line).expect("read_until 函数调用失败") != 0 {
             // this moves the ownership of the read data to s
             // there is no allocation
-            let s = String::from_utf8(self.cur_line).expect("from_utf8 函数调用失败");
-            println!("行长度: {}", s.len());
-            for c in s.chars() {
-                println!("字符: {}", c);
-            }
-            // this returns the ownership of the read data to buf
-            // there is no allocation
-            self.cur_line = s.into_bytes();
-            self.cur_line.clear();
-        }
+            let mut xxx = String::from_utf8(line).expect("from_utf8 函数调用失败");
+            let yyy = xxx.chars();
+            println!("{:?}", yyy);
+        }        
     }
 }
