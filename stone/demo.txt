@@ -1,7 +1,7 @@
 even = 0
 odd = 0
 i = 1
-while i < 10 {
+while i <= 10 {
     if i % 2 == 0 {
         even = even + i
     }else{
@@ -9,4 +9,5 @@ while i < 10 {
     }
 }
 // 这是注释。汉字的解析情况
+// 空一格 查看情况
 even + odd

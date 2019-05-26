@@ -8,6 +8,12 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
     let file = File::open("stone/demo.txt").expect("未能打开文件");
-    let lexer = Lexer::new(String::from("123"), file);
-    lexer.read();
+    let mut lexer = Lexer::new(String::from("123"), file);
+    loop{
+        let xxx = lexer.read();
+        if(xxx == None){
+            break;
+        }
+        println!("读取单词：{:?}", xxx.unwrap());
+    }
 }

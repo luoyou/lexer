@@ -27,34 +27,78 @@ impl Lexer{
         };
     }
 
-    pub fn read(mut self){
-        
+    pub fn read(&mut self)->Option<String>{
         let mut word = String::from("");
-        let c:Option<char>;
+        let mut c:Option<char>;
         loop {
             c = self.get_char();
-            if(!self::is_space(c)){
+            if(!Lexer::is_space(c)){
                 break;
             }
         }
 
         if(c == None){
             return None;
-        }
-
-        if(isDigit(c)){
+        }else if(Lexer::is_number(c)){
+            loop{
+                word.push(c.unwrap());
+                c = self.get_char();
+                if(!Lexer::is_number(c)){
+                    self.unget_char(c);
+                    break;
+                }
+            }
+        }else if(Lexer::is_letter(c)){
+            loop {
+                word.push(c.unwrap());
+                c = self.get_char();
+                if(!Lexer::is_letter_or_numberic(c)){
+                    self.unget_char(c);
+                    break;
+                }
+            }
+        }else if(c.unwrap() == '=' || c.unwrap() == '>' || c.unwrap() == '<'){
+            word.push(c.unwrap());
+            c = self.get_char();
+            if(c != None && c.unwrap() == '='){
+                word.push(c.unwrap());
+            }else{
+                self.unget_char(c);
+            }
+        }else if(c.unwrap() == '+'){
+            word.push(c.unwrap());
+        }else if(c.unwrap() == '-'){
             word.push(c.unwrap());
             loop{
-                
-
+                c = self.get_char();
+                if(Lexer::is_number(c)){
+                    word.push(c.unwrap());
+                }else{
+                    break;
+                }
+            }
+        }else if(c.unwrap() == '{' || c.unwrap() == '}'){
+            word.push(c.unwrap());
+        }else{
+            word.push(c.unwrap());
+            loop{
+                c = self.get_char();
+                if(Lexer::is_space(c)){
+                    break; 
+                }else{
+                    word.push(c.unwrap());
+                }
             }
         }
+
         return Some(word);
     }
 
     fn get_char(&mut self)->Option<char>{
         if(self.last_char != None){
-            return self.last_char;
+            let c = self.last_char;
+            self.last_char = None;
+            return c;
         }
         if(self.cur_line.is_empty()){
             let mut line = Vec::<u8>::new();
@@ -72,21 +116,36 @@ impl Lexer{
                 line = s.into_bytes();
                 line.clear();
             }else{
+                // println!("字符：None");
                 return None;
             }
         }
-        return Some(self.cur_line.remove(0));
+        let c = self.cur_line.remove(0);
+        // println!("字符：{}", c);
+        return Some(c);
     }
 
-    fn unget_char(&mut self, c: char){
-        self.last_char = Some(c);
+    fn unget_char(&mut self, c: Option<char>){
+        self.last_char = c;
     }
 
+    // 是否是空格
     fn is_space(c: Option<char>)->bool{
         return c != None && c.unwrap().is_whitespace();
     }
 
-    fn is_digit(c: Option<char>)->bool{
-        return c != None && c.unwrap().is_digit();
+    // 是否是数字
+    fn is_number(c: Option<char>)->bool{
+        return c != None && c.unwrap().is_ascii_alphanumeric() && c.unwrap().is_numeric();
+    }
+
+    // 是否是英文字母
+    fn is_letter(c: Option<char>)->bool{
+        return c != None && c.unwrap().is_ascii_alphabetic();
+    }
+
+    // 是英文字母或阿拉伯数字
+    fn is_letter_or_numberic(c: Option<char>)->bool{
+        return c != None && c.unwrap().is_ascii_alphanumeric();
     }
 }
