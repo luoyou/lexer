@@ -2,88 +2,82 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
+use super::token::IdToken;
 use super::token::Token;
+use super::token::Word;
 
 pub struct Lexer {
-    regex: String,  // 正则字符串
     read: BufReader<File>,     // 读入的文件
-
-    has_more: bool,      // 读入的文件是否还有未读的内容
-
     cur_line: Vec<char>, // 当前行
-    line_num: u32,       // 当前行号
+    cur_line_num: u32,       // 当前行号
     last_char: Option<char>      // 最近读取的字符
 }
 
 impl Lexer{
-    pub fn new(regex: String, read: File)->Self{
+    pub fn new(read: File)->Self{
         return Lexer{
-            regex: regex,  // 正则字符串
             read: BufReader::new(read),     // 读入的文件
-            has_more: true,
             cur_line: Vec::new(),
-            line_num: 0,
+            cur_line_num: 0,
             last_char: None
         };
     }
 
-    pub fn read(&mut self)->Option<String>{
+    pub fn read(&mut self)->IdToken{
         let mut word = String::from("");
         let mut c:Option<char>;
-        loop {
+        loop { // 读取字符，是空格则跳过，不是空格，保留至下方进行判断
             c = self.get_char();
-            if(!Lexer::is_space(c)){
+            if !Lexer::is_space(c) {
                 break;
             }
         }
 
-        if(c == None){
-            return None;
-        }else if(Lexer::is_number(c)){
-            loop{
-                word.push(c.unwrap());
-                c = self.get_char();
-                if(!Lexer::is_number(c)){
+        if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
+            return IdToken::new(Word::EOF, word);
+        }else if Lexer::is_number(c) {  // 是数字
+            loop{ // 循环，只要读取到一直是数字，则一直往字符串中加载
+                word.push(c.unwrap());  // 推入字符串中
+                c = self.get_char();    // 读取下一个字符
+                if !Lexer::is_number(c) {   // 不是数字，则将刚刚读取到的字符还原
                     self.unget_char(c);
                     break;
                 }
             }
-        }else if(Lexer::is_letter(c)){
+        }else if Lexer::is_letter(c) { // 是英文字母
             loop {
-                word.push(c.unwrap());
+                word.push(c.unwrap()); // 逻辑同数字
                 c = self.get_char();
-                if(!Lexer::is_letter_or_numberic(c)){
+                if !Lexer::is_letter_or_numberic(c) { // 是字母或数字，这两者可以继续组成单词
                     self.unget_char(c);
                     break;
                 }
             }
-        }else if(c.unwrap() == '=' || c.unwrap() == '>' || c.unwrap() == '<'){
+        }else if c.unwrap() == '=' || c.unwrap() == '>' || c.unwrap() == '<' { // 是字符，= > <
             word.push(c.unwrap());
             c = self.get_char();
-            if(c != None && c.unwrap() == '='){
+            if c != None && c.unwrap() == '=' {
                 word.push(c.unwrap());
             }else{
                 self.unget_char(c);
             }
-        }else if(c.unwrap() == '+'){
-            word.push(c.unwrap());
-        }else if(c.unwrap() == '-'){
+        }else if c.unwrap() == '-' { // 是减号，需要支持负数形式
             word.push(c.unwrap());
             loop{
                 c = self.get_char();
-                if(Lexer::is_number(c)){
+                if Lexer::is_number(c) {
                     word.push(c.unwrap());
                 }else{
                     break;
                 }
             }
-        }else if(c.unwrap() == '{' || c.unwrap() == '}'){
+        }else if c.unwrap() == '+' || c.unwrap() == '{' || c.unwrap() == '}' { // 是+,{,}，直接返回
             word.push(c.unwrap());
         }else{
-            word.push(c.unwrap());
+            word.push(c.unwrap()); // 其他的情况，统一推入字符串
             loop{
                 c = self.get_char();
-                if(Lexer::is_space(c)){
+                if Lexer::is_space(c) { // 是空格则中断
                     break; 
                 }else{
                     word.push(c.unwrap());
@@ -91,18 +85,19 @@ impl Lexer{
             }
         }
 
-        return Some(word);
+        return IdToken::new(self.cur_line_num, word);
     }
 
     fn get_char(&mut self)->Option<char>{
-        if(self.last_char != None){
+        if self.last_char != None {
             let c = self.last_char;
             self.last_char = None;
             return c;
         }
-        if(self.cur_line.is_empty()){
+        if self.cur_line.is_empty() {
             let mut line = Vec::<u8>::new();
-            if(self.read.read_until(b'\n', &mut line).expect("read_until 函数调用失败") != 0) {
+            if self.read.read_until(b'\n', &mut line).expect("read_until 函数调用失败") != 0 {
+                self.cur_line_num = self.cur_line_num + 1;
                 // this moves the ownership of the read data to s
                 // there is no allocation
                 let s = String::from_utf8(line).expect("from_utf8 函数调用失败");
@@ -129,7 +124,7 @@ impl Lexer{
         self.last_char = c;
     }
 
-    // 是否是空格
+    // 是否是空格, \r, \n, \t 等空白字符都会返回 true
     fn is_space(c: Option<char>)->bool{
         return c != None && c.unwrap().is_whitespace();
     }
