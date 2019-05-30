@@ -1,3 +1,4 @@
+// use std::fmt::Debug;
 
 pub trait Token{
     fn new(line_num: u32, text: String)->Self;
@@ -20,8 +21,8 @@ pub trait Token{
         panic!("该类型非整数类型");
     }
 
-    fn get_text(&self)->String{
-        return String::from("");
+    fn get_text(&self)->&str{
+        return "";
     }
 
 }
@@ -45,9 +46,9 @@ impl Token for IdToken{
         let word = Word{
             line_num: line_num,
             text: text
-        }
+        };
         return IdToken{
-            word: Word
+            word: word
         }
     }
 
@@ -59,25 +60,7 @@ impl Token for IdToken{
         return true;
     }
 
-    fn get_text(&self)->String{
-        return self.word.text;
+    fn get_text(&self)->&str{
+        return &self.word.text;
     }
 }
-
-// pub struct NumToken{
-//     word: Word
-// }
-
-// impl Token for NumToken{
-//     pub fn is_number(&self)->bool{
-//         return true;
-//     }
-
-//     pub fn get_text(&self)->String{
-//         return self.word.text;
-//     }
-
-//     pub fn get_number(&self)->String{
-//         return self.word.text;
-//     }
-// }

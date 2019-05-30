@@ -3,6 +3,7 @@ use std::fs::File;
 
 mod core;
 use self::core::lexer::Lexer;
+use self::core::token::Token;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,6 +15,6 @@ fn main() {
         if xxx.get_line_num() == 0 {
             break;
         }
-        println!("读取单词：{:?}", xxx);
+        println!("行数：{} 读取单词：{:?}", xxx.get_line_num(), xxx.get_text());
     }
 }

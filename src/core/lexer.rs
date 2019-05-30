@@ -23,7 +23,7 @@ impl Lexer{
         };
     }
 
-    pub fn read(&mut self)->IdToken{
+    pub fn read(&mut self)->impl Token{
         let mut word = String::from("");
         let mut c:Option<char>;
         loop { // 读取字符，是空格则跳过，不是空格，保留至下方进行判断
@@ -68,16 +68,18 @@ impl Lexer{
                 if Lexer::is_number(c) {
                     word.push(c.unwrap());
                 }else{
+                    self.unget_char(c);
                     break;
                 }
             }
-        }else if c.unwrap() == '+' || c.unwrap() == '{' || c.unwrap() == '}' { // 是+,{,}，直接返回
+        }else if Lexer::is_single_signal(c) { // 是+,{,}，直接返回
             word.push(c.unwrap());
         }else{
             word.push(c.unwrap()); // 其他的情况，统一推入字符串
             loop{
                 c = self.get_char();
-                if Lexer::is_space(c) { // 是空格则中断
+                if Lexer::is_space(c) || Lexer::is_enter(c) { // 是空格则中断
+                    self.unget_char(c);
                     break; 
                 }else{
                     word.push(c.unwrap());
@@ -124,9 +126,9 @@ impl Lexer{
         self.last_char = c;
     }
 
-    // 是否是空格, \r, \n, \t 等空白字符都会返回 true
+    // 是否是空格
     fn is_space(c: Option<char>)->bool{
-        return c != None && c.unwrap().is_whitespace();
+        return c != None && c.unwrap() == ' ';
     }
 
     // 是否是数字
@@ -142,5 +144,16 @@ impl Lexer{
     // 是英文字母或阿拉伯数字
     fn is_letter_or_numberic(c: Option<char>)->bool{
         return c != None && c.unwrap().is_ascii_alphanumeric();
+    }
+
+    // 是单个字符关键词
+    fn is_single_signal(c: Option<char>)->bool{
+        let unwrap_c = c.unwrap();
+        return unwrap_c == '+' || unwrap_c == '{' || unwrap_c == '}' || unwrap_c == '\r' || unwrap_c == '\n';
+    }
+
+    // 是\n
+    fn is_enter(c: Option<char>)->bool{
+        return c != None && c.unwrap() == '\n';
     }
 }
