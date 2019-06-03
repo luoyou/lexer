@@ -1,4 +1,9 @@
-// use std::fmt::Debug;
+// enum TokenType{
+//     Keyword(String),    // 关键字
+//     Symbol(String),     // 字符
+//     Identidify(String), // 标识符
+//     Number(i32)         // 数字类型 
+// }
 
 pub trait Token{
     fn new(line_num: u32, text: String)->Self;

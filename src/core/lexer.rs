@@ -14,6 +14,8 @@ pub struct Lexer {
 }
 
 impl Lexer{
+    // const Keyword = Vec![];
+
     pub fn new(read: File)->Self{
         return Lexer{
             read: BufReader::new(read),     // 读入的文件
@@ -152,7 +154,7 @@ impl Lexer{
         return unwrap_c == '+' || unwrap_c == '{' || unwrap_c == '}' || unwrap_c == '\r' || unwrap_c == '\n';
     }
 
-    // 是\n
+    // 是换行\n
     fn is_enter(c: Option<char>)->bool{
         return c != None && c.unwrap() == '\n';
     }
