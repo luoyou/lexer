@@ -32,9 +32,10 @@ pub trait Token{
 
 }
 
+// 单词结构，后续还会加上列数
 pub struct Word{
-    line_num: u32,
-    text: String
+    line_num: u32,  // 位于第几行
+    text: String    // 文字是什么
 }
 
 impl Word{
@@ -47,6 +48,34 @@ pub struct IdToken{
 
 impl Token for IdToken{
     
+    fn new(line_num: u32, text: String)->Self{
+        let word = Word{
+            line_num: line_num,
+            text: text
+        };
+        return IdToken{
+            word: word
+        }
+    }
+
+    fn get_line_num(&self)->u32{
+        return self.word.line_num;
+    }
+
+    fn is_identifier(&self)->bool{
+        return true;
+    }
+
+    fn get_text(&self)->&str{
+        return &self.word.text;
+    }
+}
+
+pub struct NumToken{
+    word: Word
+}
+
+impl Token for NumToekn {
     fn new(line_num: u32, text: String)->Self{
         let word = Word{
             line_num: line_num,

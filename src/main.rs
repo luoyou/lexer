@@ -4,6 +4,7 @@ use std::fs::File;
 mod core;
 use self::core::lexer::Lexer;
 use self::core::token::Token;
+mod define_keyword;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

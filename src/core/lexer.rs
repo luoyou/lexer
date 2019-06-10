@@ -6,6 +6,8 @@ use super::token::IdToken;
 use super::token::Token;
 use super::token::Word;
 
+use super::super::define_keyword::KEYWORDS;
+
 pub struct Lexer {
     read: BufReader<File>,     // 读入的文件
     cur_line: Vec<char>, // 当前行
@@ -14,9 +16,9 @@ pub struct Lexer {
 }
 
 impl Lexer{
-    // const Keyword = Vec![];
 
     pub fn new(read: File)->Self{
+        println!("{}", KEYWORDS.len());
         return Lexer{
             read: BufReader::new(read),     // 读入的文件
             cur_line: Vec::new(),
