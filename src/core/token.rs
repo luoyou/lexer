@@ -75,13 +75,13 @@ pub struct NumToken{
     word: Word
 }
 
-impl Token for NumToekn {
+impl Token for NumToken {
     fn new(line_num: u32, text: String)->Self{
         let word = Word{
             line_num: line_num,
             text: text
         };
-        return IdToken{
+        return NumToken{
             word: word
         }
     }
