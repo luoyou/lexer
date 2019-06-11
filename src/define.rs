@@ -1,7 +1,0 @@
-enum Keyword{
-  
-}
-
-enum Symbol{
-
-}
