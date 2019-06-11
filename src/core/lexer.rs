@@ -2,11 +2,13 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
-use super::token::IdToken;
 use super::token::Token;
-use super::token::Word;
+use super::token::TokenType;
 
-use super::super::define_keyword::KEYWORDS;
+use super::super::define::KEYWORDS;
+use super::super::define::STOP_CHARS;
+use super::super::define::SINGLE_CHARS;
+use super::super::define::SKIP_CHARS;
 
 pub struct Lexer {
     read: BufReader<File>,     // 读入的文件
@@ -18,7 +20,6 @@ pub struct Lexer {
 impl Lexer{
 
     pub fn new(read: File)->Self{
-        println!("{}", KEYWORDS.len());
         return Lexer{
             read: BufReader::new(read),     // 读入的文件
             cur_line: Vec::new(),
@@ -27,18 +28,18 @@ impl Lexer{
         };
     }
 
-    pub fn read(&mut self)->impl Token{
+    pub fn read(&mut self)->Token{
         let mut word = String::from("");
         let mut c:Option<char>;
         loop { // 读取字符，是空格则跳过，不是空格，保留至下方进行判断
             c = self.get_char();
-            if !Lexer::is_space(c) {
+            if !Lexer::is_skip_char(c) {
                 break;
             }
         }
 
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
-            return IdToken::new(Word::EOF, word);
+            return Token::new(Token::EOF, word, TokenType::End);
         }else if Lexer::is_number(c) {  // 是数字
             loop{ // 循环，只要读取到一直是数字，则一直往字符串中加载
                 word.push(c.unwrap());  // 推入字符串中
@@ -48,15 +49,7 @@ impl Lexer{
                     break;
                 }
             }
-        }else if Lexer::is_letter(c) { // 是英文字母
-            loop {
-                word.push(c.unwrap()); // 逻辑同数字
-                c = self.get_char();
-                if !Lexer::is_letter_or_numberic(c) { // 是字母或数字，这两者可以继续组成单词
-                    self.unget_char(c);
-                    break;
-                }
-            }
+            return Token::new(self.cur_line_num, word, TokenType::Number);
         }else if c.unwrap() == '=' || c.unwrap() == '>' || c.unwrap() == '<' { // 是字符，= > <
             word.push(c.unwrap());
             c = self.get_char();
@@ -65,7 +58,8 @@ impl Lexer{
             }else{
                 self.unget_char(c);
             }
-        }else if c.unwrap() == '-' { // 是减号，需要支持负数形式
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);            
+        }else if c.unwrap() == '-' { // 是减号，需要支持负数形式， todo 还有 -> 尚未支持
             word.push(c.unwrap());
             loop{
                 c = self.get_char();
@@ -76,13 +70,15 @@ impl Lexer{
                     break;
                 }
             }
+            return Token::new(self.cur_line_num, word, TokenType::Number);
         }else if Lexer::is_single_signal(c) { // 是+,{,}，直接返回
             word.push(c.unwrap());
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);
         }else{
             word.push(c.unwrap()); // 其他的情况，统一推入字符串
             loop{
                 c = self.get_char();
-                if Lexer::is_space(c) || Lexer::is_enter(c) { // 是空格则中断
+                if Lexer::is_stop_char(c) { // 是空格则中断
                     self.unget_char(c);
                     break; 
                 }else{
@@ -91,7 +87,7 @@ impl Lexer{
             }
         }
 
-        return IdToken::new(self.cur_line_num, word);
+        return Token::new(self.cur_line_num, word, TokenType::Identidify);
     }
 
     fn get_char(&mut self)->Option<char>{
@@ -131,8 +127,8 @@ impl Lexer{
     }
 
     // 是否是空格
-    fn is_space(c: Option<char>)->bool{
-        return c != None && c.unwrap() == ' ';
+    fn is_skip_char(c: Option<char>)->bool{
+        return c != None && SKIP_CHARS.contains(&c.unwrap());
     }
 
     // 是否是数字
@@ -140,24 +136,27 @@ impl Lexer{
         return c != None && c.unwrap().is_ascii_alphanumeric() && c.unwrap().is_numeric();
     }
 
-    // 是否是英文字母
-    fn is_letter(c: Option<char>)->bool{
-        return c != None && c.unwrap().is_ascii_alphabetic();
-    }
+    // // 是否是英文字母
+    // fn is_letter(c: Option<char>)->bool{
+    //     return c != None && c.unwrap().is_ascii_alphabetic();
+    // }
 
-    // 是英文字母或阿拉伯数字
-    fn is_letter_or_numberic(c: Option<char>)->bool{
-        return c != None && c.unwrap().is_ascii_alphanumeric();
-    }
+    // // 是英文字母或阿拉伯数字
+    // fn is_letter_or_numberic(c: Option<char>)->bool{
+    //     return c != None && c.unwrap().is_ascii_alphanumeric();
+    // }
 
     // 是单个字符关键词
     fn is_single_signal(c: Option<char>)->bool{
-        let unwrap_c = c.unwrap();
-        return unwrap_c == '+' || unwrap_c == '{' || unwrap_c == '}' || unwrap_c == '\r' || unwrap_c == '\n';
+        return c != None && SINGLE_CHARS.contains(&c.unwrap());
     }
 
     // 是换行\n
-    fn is_enter(c: Option<char>)->bool{
-        return c != None && c.unwrap() == '\n';
+    // fn is_enter(c: Option<char>)->bool{
+    //     return c != None && c.unwrap() == '\n';
+    // }
+
+    fn is_stop_char(c: Option<char>)->bool{
+        return c == None || STOP_CHARS.contains(&c.unwrap());
     }
 }

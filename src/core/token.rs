@@ -1,100 +1,45 @@
-// enum TokenType{
-//     Keyword(String),    // 关键字
-//     Symbol(String),     // 字符
-//     Identidify(String), // 标识符
-//     Number(i32)         // 数字类型 
-// }
-
-pub trait Token{
-    fn new(line_num: u32, text: String)->Self;
-
-    fn get_line_num(&self)->u32;
-
-    fn is_identifier(&self)->bool{
-        return false;
-    }
-
-    fn is_number(&self)->bool{
-        return false;
-    }
-
-    fn is_string(&self)->bool{
-        return false;
-    }
-
-    fn get_number(&self)->i32{
-        panic!("该类型非整数类型");
-    }
-
-    fn get_text(&self)->&str{
-        return "";
-    }
-
+pub enum TokenType{
+    Keyword,    // 关键字
+    Identidify, // 标识符
+    Number,     // 数字类型
+    End         // 文件结束符
 }
 
 // 单词结构，后续还会加上列数
-pub struct Word{
+pub struct Token{
     line_num: u32,  // 位于第几行
-    text: String    // 文字是什么
+    text: String,    // 文字是什么
+    token_type: TokenType
 }
 
-impl Word{
+
+impl Token {
     pub const EOF:u32 = 0;  // 定义文件结束符
-}
 
-pub struct IdToken{
-    word: Word
-}
-
-impl Token for IdToken{
-    
-    fn new(line_num: u32, text: String)->Self{
-        let word = Word{
+    pub fn new(line_num: u32, text: String, token_type: TokenType)->Self{
+        return Token{
             line_num: line_num,
-            text: text
-        };
-        return IdToken{
-            word: word
+            text: text,
+            token_type: token_type
         }
     }
 
-    fn get_line_num(&self)->u32{
-        return self.word.line_num;
+    pub fn get_line_num(&self)->u32{
+        return self.line_num;
     }
 
-    fn is_identifier(&self)->bool{
-        return true;
+    pub fn get_type(&self)->&TokenType{
+        return &self.token_type;
     }
 
-    fn get_text(&self)->&str{
-        return &self.word.text;
-    }
-}
-
-pub struct NumToken{
-    word: Word
-}
-
-impl Token for NumToken {
-    fn new(line_num: u32, text: String)->Self{
-        let word = Word{
-            line_num: line_num,
-            text: text
+    pub fn is_end(&self)->bool{
+        return match self.token_type {
+            TokenType::End => true,
+            _ => false
         };
-        return NumToken{
-            word: word
-        }
     }
 
-    fn get_line_num(&self)->u32{
-        return self.word.line_num;
-    }
-
-    fn is_identifier(&self)->bool{
-        return true;
-    }
-
-    fn get_text(&self)->&str{
-        return &self.word.text;
+    pub fn get_text(&self)->&str{
+        return &self.text;
     }
 }
