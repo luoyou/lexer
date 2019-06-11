@@ -2,6 +2,7 @@ pub enum TokenType{
     Keyword,    // 关键字
     Identidify, // 标识符
     Number,     // 数字类型
+    Comment,    // 注释
     End         // 文件结束符
 }
 
@@ -41,5 +42,15 @@ impl Token {
 
     pub fn get_text(&self)->&str{
         return &self.text;
+    }
+
+    pub fn get_type_name(&self)->&str{
+        match self.token_type {
+            TokenType::Keyword => "关键字",
+            TokenType::Identidify => "标识符",
+            TokenType::Number => "整数",
+            TokenType::Comment => "注释",
+            TokenType::End => "文件结束",
+        }
     }
 }

@@ -40,6 +40,22 @@ impl Lexer{
 
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
             return Token::new(Token::EOF, word, TokenType::End);
+        }else if c.unwrap() == '/'{
+            word.push(c.unwrap());
+            c = self.get_char();
+            if c != None && c.unwrap() == '/'{ // 达成单行注释条件
+                loop {
+                    word.push(c.unwrap());
+                    c = self.get_char();
+                    if c==None || c.unwrap() == '\n'{
+                        break;
+                    }
+                }
+                return Token::new(self.cur_line_num, word, TokenType::Comment);
+            }else{
+                self.unget_char(c);
+                return Token::new(self.cur_line_num, word, TokenType::Keyword);
+            }
         }else if Lexer::is_number(c) {  // 是数字
             loop{ // 循环，只要读取到一直是数字，则一直往字符串中加载
                 word.push(c.unwrap());  // 推入字符串中
@@ -86,8 +102,11 @@ impl Lexer{
                 }
             }
         }
-
-        return Token::new(self.cur_line_num, word, TokenType::Identidify);
+        if KEYWORDS.contains(&&*word){
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);    
+        }else{
+            return Token::new(self.cur_line_num, word, TokenType::Identidify);
+        }
     }
 
     fn get_char(&mut self)->Option<char>{

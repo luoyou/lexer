@@ -15,6 +15,6 @@ fn main() {
         if xxx.get_line_num() == 0 {
             break;
         }
-        println!("行数：{} 读取单词：{:?}", xxx.get_line_num(), xxx.get_text());
+        println!("行数：{} {}：{:?}", xxx.get_line_num(), xxx.get_type_name(), xxx.get_text());
     }
 }
