@@ -12,9 +12,10 @@ use super::super::define::SKIP_CHARS;
 
 pub struct Lexer {
     read: BufReader<File>,     // 读入的文件
-    cur_line: Vec<char>, // 当前行
-    cur_line_num: u32,       // 当前行号
-    last_char: Option<char>      // 最近读取的字符
+    keyword_queue: Vec<Token>,        // 关键词队列
+    cur_line: Vec<char>,       // 当前行
+    cur_line_num: u32,         // 当前行号
+    last_char: Option<char>    // 最近读取的字符
 }
 
 impl Lexer{
@@ -24,11 +25,40 @@ impl Lexer{
             read: BufReader::new(read),     // 读入的文件
             cur_line: Vec::new(),
             cur_line_num: 0,
+            keyword_queue: vec![],
             last_char: None
         };
     }
 
+    // 读取单词（消耗队列）
     pub fn read(&mut self)->Token{
+        if self.fill_queue(0){
+            return self.keyword_queue.remove(0);
+        }else{
+            return Token::new(Token::EOF, "".to_string(), TokenType::End);
+        }
+    }
+
+    // 提取单词
+    pub fn peek(&mut self, num: usize)->Token{
+        if self.fill_queue(num) {
+            return self.keyword_queue.into_iter().nth(num).unwrap();
+        }else{
+            return Token::new(Token::EOF, "".to_string(), TokenType::End);
+        }
+    }
+
+    fn fill_queue(&mut self, num: usize)->bool{
+        while num >= self.keyword_queue.len() {
+            let token = self.next_token();
+            if token.is_end() {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    fn next_token(&mut self)->Token{
         let mut word = String::from("");
         let mut c:Option<char>;
         loop { // 读取字符，是空格则跳过，不是空格，保留至下方进行判断
