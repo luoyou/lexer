@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub enum TokenType{
     Keyword,    // 关键字
     Identidify, // 标识符
@@ -7,6 +8,7 @@ pub enum TokenType{
 }
 
 // 单词结构，后续还会加上列数
+#[derive(Debug, Clone)]
 pub struct Token{
     line_num: u32,  // 位于第几行
     text: String,    // 文字是什么

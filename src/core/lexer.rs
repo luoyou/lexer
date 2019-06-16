@@ -10,6 +10,7 @@ use super::super::define::STOP_CHARS;
 use super::super::define::SINGLE_CHARS;
 use super::super::define::SKIP_CHARS;
 
+
 pub struct Lexer {
     read: BufReader<File>,     // 读入的文件
     keyword_queue: Vec<Token>,        // 关键词队列
@@ -33,7 +34,7 @@ impl Lexer{
     // 读取单词（消耗队列）
     pub fn read(&mut self)->Token{
         if self.fill_queue(0){
-            return self.keyword_queue.remove(0);
+            return self.keyword_queue.pop().unwrap();
         }else{
             return Token::new(Token::EOF, "".to_string(), TokenType::End);
         }
@@ -42,7 +43,7 @@ impl Lexer{
     // 提取单词
     pub fn peek(&mut self, num: usize)->Token{
         if self.fill_queue(num) {
-            return self.keyword_queue.into_iter().nth(num).unwrap();
+            return self.keyword_queue.get(num).cloned().unwrap();
         }else{
             return Token::new(Token::EOF, "".to_string(), TokenType::End);
         }
@@ -53,6 +54,8 @@ impl Lexer{
             let token = self.next_token();
             if token.is_end() {
                 return false;
+            }else{
+                self.keyword_queue.push(token);
             }
         }
         return true;
