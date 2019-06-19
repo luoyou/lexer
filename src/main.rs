@@ -20,6 +20,6 @@ fn main() {
         i = i + 1;
         // println!("行数：{} {}：{:?}", xxx.get_line_num(), xxx.get_type_name(), xxx.get_text());
     }
-    let astree = Astree::new();
+    let astree = Astree::new_node(vec![]);
     println!("子节点数量：{}", astree.get_child_num());
 }
