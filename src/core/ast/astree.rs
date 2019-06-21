@@ -1,6 +1,6 @@
 use super::super::token::Token;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 enum AstreeType {
     Root,   // 根节点
     Node,   // 枝节点
@@ -8,6 +8,7 @@ enum AstreeType {
 }
 
 // 抽象语法树结构
+#[derive(Debug)]
 pub struct Astree {
     children_num: u8,
     token: Option<Token>,
@@ -55,11 +56,15 @@ impl Astree {
     }
 
     // 读取token的位置
+    // 递归调用子节点的 location ，一直调用到叶节点为止
     pub fn location(&self)->Option<String>{
         if self.is_leaf() {
             let mut location = "位于".to_string();
-            let token = self.token.unwrap();
-            // location.push_str(&token.get_line_num().to_string());
+            match &self.token {
+                Some(x) => location.push_str(&x.get_line_num().to_string()) ,
+                None => location = "未找到错误行数".to_string()
+            };
+            
             return Some(location);
         }else{
             for node in &self.children{
@@ -78,19 +83,23 @@ impl Astree {
     }
 
     // 返回字面量
-    // pub fn to_string(&self)->String{
-    //     if self.is_leaf() {
-    //         return self.token.unwrap().get_text().to_string();
-    //     }
-    //     let mut builder = String::from("(");
-    //     let mut sep = "";
-    //     for node in &self.children{
-    //         builder.push_str(sep);
-    //         sep = " ";
-    //         builder.push_str(&node.to_string());
-    //     }
-    //     builder.push(')');
-    //     return builder;
-    // }
+    // 调用子节点的 to_string, 一直到叶节点为止
+    pub fn to_string(&self)->String{
+        if self.is_leaf() {
+            return match &self.token {
+                Some(x) => x.get_text().to_string(),
+                None => "".to_string()
+            }
+        }
+        let mut builder = String::from("(");
+        let mut sep = "";
+        for node in &self.children{
+            builder.push_str(sep);
+            sep = " ";
+            builder.push_str(&node.to_string());
+        }
+        builder.push(')');
+        return builder;
+    }
     
 }

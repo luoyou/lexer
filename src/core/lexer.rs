@@ -120,6 +120,15 @@ impl Lexer{
                 }
             }
             return Token::new(self.cur_line_num, word, TokenType::Number);
+        }else if c.unwrap() == '*'{
+            word.push(c.unwrap());
+            c = self.get_char();
+            if c != None && c.unwrap() == '/' {
+                word.push(c.unwrap());
+            }else{
+                self.unget_char(c);
+            }
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);
         }else if Lexer::is_single_signal(c) { // 是+,{,}，直接返回
             word.push(c.unwrap());
             return Token::new(self.cur_line_num, word, TokenType::Keyword);

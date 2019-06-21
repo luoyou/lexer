@@ -55,4 +55,12 @@ impl Token {
             TokenType::End => "文件结束",
         }
     }
+
+    // 判断是数字
+    pub fn is_number(&self)->bool{
+        match self.token_type {
+            TokenType::Number => true,
+            _ => false
+        }
+    }
 }
