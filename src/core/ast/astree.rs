@@ -10,8 +10,7 @@ enum AstreeType {
 // 抽象语法树结构
 #[derive(Debug)]
 pub struct Astree {
-    children_num: u8,
-    token: Option<Token>,
+    token: Token,
     children: Vec<Astree>,
     node_type: AstreeType
 }
@@ -20,8 +19,7 @@ impl Astree {
     // 新建枝节点
     pub fn new_node(children: Vec<Astree>)->Self{
         return Astree{
-            children_num: 0,
-            token: None,
+            token: Token::nothing(),
             children: children,
             node_type: AstreeType::Node
         }
@@ -30,8 +28,7 @@ impl Astree {
     // 新建叶节点
     pub fn new_leaf(token: Token)->Self{
         return Astree{
-            children_num: 0,
-            token: Some(token),
+            token: token,
             children: vec![],
             node_type: AstreeType::Leaf
         }
@@ -51,8 +48,8 @@ impl Astree {
     }
 
     // 获取子节点数量
-    pub fn get_child_num(&self)->u8{
-        return self.children_num;
+    pub fn get_child_num(&self)->usize{
+        return self.children.len();
     }
 
     // 读取token的位置
@@ -60,10 +57,11 @@ impl Astree {
     pub fn location(&self)->Option<String>{
         if self.is_leaf() {
             let mut location = "位于".to_string();
-            match &self.token {
-                Some(x) => location.push_str(&x.get_line_num().to_string()) ,
-                None => location = "未找到错误行数".to_string()
-            };
+            if self.token.has_location(){
+                location.push_str(&self.token.get_line_num().to_string())
+            }else{
+                location = "未找到错误行数".to_string()
+            }
             
             return Some(location);
         }else{
@@ -86,10 +84,7 @@ impl Astree {
     // 调用子节点的 to_string, 一直到叶节点为止
     pub fn to_string(&self)->String{
         if self.is_leaf() {
-            return match &self.token {
-                Some(x) => x.get_text().to_string(),
-                None => "".to_string()
-            }
+            return self.token.get_text().to_string();
         }
         let mut builder = String::from("(");
         let mut sep = "";
@@ -100,6 +95,42 @@ impl Astree {
         }
         builder.push(')');
         return builder;
+    }
+
+    // 对节点进行求值
+    pub fn eval(&self)->i32{
+        if self.is_leaf() {
+            if self.token.is_number() {
+                return self.token.get_text().parse().unwrap();
+            }else{
+                panic!(self.token.get_text().to_string() + " 类型错误");
+            }
+        }else{
+            let left_ast = self.children.get(0);
+            let left = left_ast.unwrap().eval();
+            
+            let op_ast = self.children.get(1);
+            let op = op_ast.unwrap().token.get_text();
+
+            let right_ast = self.children.get(2);
+            let right = right_ast.unwrap().eval();
+            // println!("左值：{},右值：{}", left, right);
+            match op {
+                "+" => {
+                    return left + right;
+                },
+                "-" => {
+                    return left - right;
+                },
+                "*" => {
+                    return left * right;
+                },
+                "/" => {
+                    return left / right;
+                },
+                _ => panic!("操作符错误")
+            }
+        }
     }
     
 }

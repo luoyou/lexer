@@ -15,7 +15,7 @@ pub struct Lexer {
     read: BufReader<File>,     // 读入的文件
     keyword_queue: Vec<Token>,        // 关键词队列
     cur_line: Vec<char>,       // 当前行
-    cur_line_num: u32,         // 当前行号
+    cur_line_num: i32,         // 当前行号
     last_char: Option<char>    // 最近读取的字符
 }
 
@@ -36,7 +36,7 @@ impl Lexer{
         if self.fill_queue(0){
             return self.keyword_queue.pop().unwrap();
         }else{
-            return Token::new(Token::EOF, "".to_string(), TokenType::End);
+            return Token::end();
         }
     }
 
@@ -45,7 +45,7 @@ impl Lexer{
         if self.fill_queue(num) {
             return self.keyword_queue.get(num).cloned().unwrap();
         }else{
-            return Token::new(Token::EOF, "".to_string(), TokenType::End);
+            return Token::end();
         }
     }
 
@@ -72,7 +72,7 @@ impl Lexer{
         }
 
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
-            return Token::new(Token::EOF, word, TokenType::End);
+            return Token::end();
         }else if c.unwrap() == '/'{
             word.push(c.unwrap());
             c = self.get_char();

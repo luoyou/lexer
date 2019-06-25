@@ -61,7 +61,7 @@ impl Parse{
     fn token(&mut self, name: &str){
         let token = self.lexer.read();
         if token.get_text() != name {
-            panic!("读取单词错误");
+            panic!(token.get_text().to_string() + "读取单词错误");
         }
     }
 
