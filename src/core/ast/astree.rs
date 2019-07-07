@@ -1,7 +1,40 @@
 use super::super::token::Token;
+use super::eval::Eval;
+// use super::eval::BasicType;
+
+
+pub trait AstreeNode{
+    fn eval(&self)->Eval;
+
+    fn child(&self, num: i32)->Self;
+
+    fn children(&self)->Vec<Self>{
+        return vec![];
+    }
+}
+
+struct ExprNode {
+    children: Vec<AstreeNode>
+}
+
+impl AstreeNode for ExprNode{
+    pub fn new(children: Vec<AstreeNode>)->Self{
+        return ExprNode{
+            children: children
+        }
+    }
+
+    fn child(&self, num: i32)->Option<AstreeNode>{
+        return 
+    }
+
+    fn eval(&self)->Eval{
+
+    }
+}
 
 #[derive(PartialEq, Debug)]
-enum AstreeType {
+pub enum AstreeType {
     Root,   // 根节点
     Node,   // 枝节点
     Leaf    // 叶节点
@@ -35,7 +68,7 @@ impl Astree {
     }
 
     // 获取某个子节点
-    fn child(&self, i: u8)->&Astree{
+    pub fn child(&self, i: u8)->&Astree{
         if i == 0 {
             println!("aaa");
         }
@@ -43,8 +76,12 @@ impl Astree {
     }
 
     // 获取所有子节点
-    fn children(&self)->&Vec<Astree>{
+    pub fn children(&self)->&Vec<Astree>{
         return &self.children;
+    }
+
+    pub fn token(&self)->&Token{
+        return &self.token;
     }
 
     // 获取子节点数量
@@ -76,7 +113,7 @@ impl Astree {
     }
 
     // 是否是叶节点
-    fn is_leaf(&self)->bool{
+    pub fn is_leaf(&self)->bool{
         return self.node_type == AstreeType::Leaf;
     }
 
@@ -97,40 +134,44 @@ impl Astree {
         return builder;
     }
 
-    // 对节点进行求值
-    pub fn eval(&self)->i32{
-        if self.is_leaf() {
-            if self.token.is_number() {
-                return self.token.get_text().parse().unwrap();
-            }else{
-                panic!(self.token.get_text().to_string() + " 类型错误");
-            }
-        }else{
-            let left_ast = self.children.get(0);
-            let left = left_ast.unwrap().eval();
-            
-            let op_ast = self.children.get(1);
-            let op = op_ast.unwrap().token.get_text();
-
-            let right_ast = self.children.get(2);
-            let right = right_ast.unwrap().eval();
-            // println!("左值：{},右值：{}", left, right);
-            match op {
-                "+" => {
-                    return left + right;
-                },
-                "-" => {
-                    return left - right;
-                },
-                "*" => {
-                    return left * right;
-                },
-                "/" => {
-                    return left / right;
-                },
-                _ => panic!("操作符错误")
-            }
-        }
+    pub fn eval(&self)->Eval{
+        return Eval::new(self);
     }
+
+    // 对节点进行求值
+    // pub fn eval(&self)->i32{
+    //     if self.is_leaf() {
+    //         if self.token.is_number() {
+    //             return self.token.get_text().parse().unwrap();
+    //         }else{
+    //             panic!(self.token.get_text().to_string() + " 类型错误");
+    //         }
+    //     }else{
+    //         let left_ast = self.children.get(0);
+    //         let left = left_ast.unwrap().eval();
+            
+    //         let op_ast = self.children.get(1);
+    //         let op = op_ast.unwrap().token.get_text();
+
+    //         let right_ast = self.children.get(2);
+    //         let right = right_ast.unwrap().eval();
+    //         // println!("左值：{},右值：{}", left, right);
+    //         match op {
+    //             "+" => {
+    //                 return left + right;
+    //             },
+    //             "-" => {
+    //                 return left - right;
+    //             },
+    //             "*" => {
+    //                 return left * right;
+    //             },
+    //             "/" => {
+    //                 return left / right;
+    //             },
+    //             _ => panic!("操作符错误")
+    //         }
+    //     }
+    // }
     
 }

@@ -110,16 +110,16 @@ impl Lexer{
             return Token::new(self.cur_line_num, word, TokenType::Keyword);            
         }else if c.unwrap() == '-' { // 是减号，需要支持负数形式， todo 还有 -> 尚未支持
             word.push(c.unwrap());
-            loop{
-                c = self.get_char();
-                if Lexer::is_number(c) {
-                    word.push(c.unwrap());
-                }else{
-                    self.unget_char(c);
-                    break;
-                }
-            }
-            return Token::new(self.cur_line_num, word, TokenType::Number);
+            // loop{   // 负数形式存在问题，先注释
+            //     c = self.get_char();
+            //     if Lexer::is_number(c) {
+            //         word.push(c.unwrap());
+            //     }else{
+            //         self.unget_char(c);
+            //         break;
+            //     }
+            // }
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);
         }else if c.unwrap() == '*'{
             word.push(c.unwrap());
             c = self.get_char();

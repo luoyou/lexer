@@ -46,6 +46,10 @@ impl Parse{
             let e = self.expression();
             self.token(")");
             return e;
+        }else if self.is_token("-"){
+            let op = Astree::new_leaf(self.lexer.read());
+            let factor = self.factor();
+            return Astree::new_node(vec![op, factor]);
         }else{
             let token = self.lexer.read();
             if token.is_number() {
@@ -61,7 +65,7 @@ impl Parse{
     fn token(&mut self, name: &str){
         let token = self.lexer.read();
         if token.get_text() != name {
-            panic!(token.get_text().to_string() + "读取单词错误");
+            panic!(token.get_text().to_string() + "读取单词错误，此处应为：" + name);
         }
     }
 
