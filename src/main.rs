@@ -34,5 +34,5 @@ fn test_ast_parse(){
     let mut lexer = Lexer::new(file);
     let mut parse = Parse::new(lexer);
     let ast = parse.expression();
-    println!("语法分析结果：{:#?}", ast.to_string());
+    println!("语法分析结果：{:#?}", ast);
 }

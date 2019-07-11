@@ -1,6 +1,6 @@
 use super::lexer::Lexer;
 
-use super::ast::astree::Astree;
+use super::ast::astree::{AstreeNode, ExprNode, NegativeNumberNode, NumberLeaf, OpLeaf};
 
 pub struct Parse{
     lexer: Lexer
@@ -18,43 +18,52 @@ impl Parse{
         }
     }
 
-    pub fn expression(&mut self)->Astree{
+    pub fn expression(&mut self)->Box<AstreeNode>{
         let mut left = self.term();
         // println!("表达式：{:#?}", left);
         while self.is_token("+") || self.is_token("-") {
-            let op = Astree::new_leaf(self.lexer.read());
+            let op = OpLeaf::new(self.lexer.read());
             let right = self.term();
-            left = Astree::new_node(vec![left, op, right]);
+            let expr_node = ExprNode::new(
+                vec![left, Box::new(op), right]
+            );
+            left = Box::new(expr_node);
         }
         return left;
     }
 
-    pub fn term(&mut self)->Astree{
+    pub fn term(&mut self)->Box<AstreeNode>{
         let mut left = self.factor();
         // println!("项：{:#?}", left);
         while self.is_token("*") || self.is_token("/") {
-            let op = Astree::new_leaf(self.lexer.read());
+            let op = OpLeaf::new(self.lexer.read());
             let right = self.factor();
-            left = Astree::new_node(vec![left, op, right]);
+            let expr_node = ExprNode::new(
+                vec![left, Box::new(op), right]
+            );
+            left = Box::new(expr_node);
         }
         return left;
     }
 
-    pub fn factor(&mut self)->Astree{
+    pub fn factor(&mut self)->Box<AstreeNode>{
         if self.is_token("(") {
             self.token("(");
             let e = self.expression();
             self.token(")");
             return e;
         }else if self.is_token("-"){
-            let op = Astree::new_leaf(self.lexer.read());
+            let op = OpLeaf::new(self.lexer.read());
             let factor = self.factor();
-            return Astree::new_node(vec![op, factor]);
+            let negative_node = NegativeNumberNode::new(
+                vec![Box::new(op), factor]
+            );
+            return Box::new(negative_node);
         }else{
             let token = self.lexer.read();
             if token.is_number() {
-                let num_leaf = Astree::new_leaf(token);
-                return num_leaf;
+                let num_leaf = NumberLeaf::new(token);
+                return Box::new(num_leaf);
             }else{
                 panic!("读取到的是非数字字符");
             }
