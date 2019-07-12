@@ -1,2 +1,2 @@
 pub mod astree;
-// pub mod eval;
+pub mod eval;

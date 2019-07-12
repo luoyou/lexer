@@ -7,7 +7,7 @@ pub struct Parse{
 }
 
 
-// factor:     NUMBER | "(" expression ")"
+// factor:     NUMBER | "(" expression ")" | - factor
 // term:       factor { ("*" | "/") factor }
 // expression: term   { ("+" | "-") term }
 
@@ -35,7 +35,7 @@ impl Parse{
     pub fn term(&mut self)->Box<AstreeNode>{
         let mut left = self.factor();
         // println!("项：{:#?}", left);
-        while self.is_token("*") || self.is_token("/") {
+        while self.is_token("*") || self.is_token("/") || self.is_token("%") {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.factor();
             let expr_node = ExprNode::new(

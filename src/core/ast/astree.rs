@@ -6,18 +6,23 @@
  */
 use std::fmt::Debug;  
 use super::super::token::Token;
-// use super::eval::Eval;
-// use super::eval::BasicType;
+use super::eval::Eval;
 
 
 pub trait AstreeNode: Debug{
-    // fn eval(&self)->Eval;
+    fn eval(&self)->Eval{
+        panic!("本类型不支持求值")
+    }
 
     // fn child(&self, num: i32)->&Self;
 
     // fn children(&self)->Vec<&Self>{
     //     return vec![];
     // }
+
+    fn location(&self)->String;
+
+    fn to_string(&self)->String;
 }
 
 #[derive(Debug)]
@@ -42,7 +47,38 @@ pub struct OpLeaf{
     token: Token
 }
 
-impl AstreeNode for ExprNode{}
+impl AstreeNode for ExprNode{
+
+    fn eval(&self)->Eval{
+        let left  = self.children.get(0).unwrap().eval();
+        let op    = self.children.get(1).unwrap().eval();
+        let right = self.children.get(2).unwrap().eval();
+        left.cal(op, right)
+    }
+
+    fn location(&self)->String{
+        for node in &self.children{
+            let s = node.location();
+            if s != "".to_string() {
+                return s;
+            }
+        }
+        return "".to_string();
+    }
+
+    fn to_string(&self)->String{
+        let mut builder = String::from("(");
+        let mut sep = "";
+        for node in &self.children{
+            builder.push_str(sep);
+            sep = " ";
+            builder.push_str(&node.to_string());
+        }
+        builder.push(')');
+        return builder;
+    }
+
+}
 impl ExprNode{
     pub fn new(children: Vec<Box<AstreeNode>>)->Self{
         return ExprNode{
@@ -52,7 +88,33 @@ impl ExprNode{
     }
 }
 
-impl AstreeNode for NegativeNumberNode{}
+impl AstreeNode for NegativeNumberNode{
+    fn eval(&self)->Eval{
+        // let op     = self.children.get(0).unwrap().eval();
+        let number = self.children.get(1).unwrap().eval();
+        // println!("{:#?}", number);
+        match number {
+            Eval::TNumber(n) => Eval::TNumber(-n),
+            _ => panic!("数字异常")
+        }
+    }
+
+    fn location(&self)->String{
+        return "".to_string();
+    }
+
+    fn to_string(&self)->String{
+        let mut builder = String::from("(");
+        let mut sep = "";
+        for node in &self.children{
+            builder.push_str(sep);
+            sep = " ";
+            builder.push_str(&node.to_string());
+        }
+        builder.push(')');
+        return builder;
+    }
+}
 impl NegativeNumberNode{
     pub fn new(children: Vec<Box<AstreeNode>>)->Self{
         NegativeNumberNode{
@@ -62,7 +124,27 @@ impl NegativeNumberNode{
     }
 }
 
-impl AstreeNode for NumberLeaf{}
+impl AstreeNode for NumberLeaf{
+    fn eval(&self)->Eval{
+        return Eval::TNumber(self.token.get_text().parse().unwrap());
+    }
+
+    fn location(&self)->String{
+        let mut location = "位于第".to_string();
+        if self.token.has_location(){
+            location.push_str(&self.token.get_line_num().to_string());
+            location.push('行');
+        }else{
+            location = "".to_string();
+        }
+        
+        return location;
+    }
+
+    fn to_string(&self)->String{
+        return self.token.get_text().to_string();
+    }
+}
 impl NumberLeaf{
     pub fn new(token: Token)->Self{
         NumberLeaf{
@@ -71,7 +153,27 @@ impl NumberLeaf{
     }
 }
 
-impl AstreeNode for OpLeaf{}
+impl AstreeNode for OpLeaf{
+    fn eval(&self)->Eval{
+        return Eval::TString(self.token.get_text().to_string());
+    }
+
+    fn location(&self)->String{
+        let mut location = "位于第".to_string();
+        if self.token.has_location(){
+            location.push_str(&self.token.get_line_num().to_string());
+            location.push('行');
+        }else{
+            location = "".to_string();
+        }
+        
+        return location;
+    }
+
+    fn to_string(&self)->String{
+        return self.token.get_text().to_string();
+    }
+}
 impl OpLeaf{
     pub fn new(token: Token)->Self{
         OpLeaf{
