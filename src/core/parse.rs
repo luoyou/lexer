@@ -1,6 +1,10 @@
 use super::lexer::Lexer;
 
-use super::ast::astree::{AstreeNode, ExprNode, NegativeNumberNode, NumberLeaf, OpLeaf};
+use super::ast::astree::AstreeNode;
+use super::ast::expression_node::ExpressionNode;
+use super::ast::negative_number_node::NegativeNumberNode;
+use super::ast::number_leaf::NumberLeaf;
+use super::ast::op_leaf::OpLeaf;
 
 pub struct Parse{
     lexer: Lexer
@@ -24,7 +28,7 @@ impl Parse{
         while self.is_token("+") || self.is_token("-") {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.term();
-            let expr_node = ExprNode::new(
+            let expr_node = ExpressionNode::new(
                 vec![left, Box::new(op), right]
             );
             left = Box::new(expr_node);
@@ -38,7 +42,7 @@ impl Parse{
         while self.is_token("*") || self.is_token("/") || self.is_token("%") {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.factor();
-            let expr_node = ExprNode::new(
+            let expr_node = ExpressionNode::new(
                 vec![left, Box::new(op), right]
             );
             left = Box::new(expr_node);

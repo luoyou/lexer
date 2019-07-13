@@ -71,17 +71,18 @@ factor    : "-" primary | primary
 term      : factor { ("*" | "/" | "%") factor }
 expr      :  term { ("+" | "-") term}
 block     : "{" [statement] { (";" | EOL) [ statement ] } "}"
-simple    : expr
+assign    : IDENTIFIER = expr
 statement : "if" expr block [ "else" block]
             | "while" expr block
             | simple
 program   : [statement] (";" | EOL)
 
 
-# 此处是四则运算的简单版本
+# 此处是仅四则运算的版本
 factor:     NUMBER | "(" expression ")" | - factor
 term:       factor { ("*" | "/" | "%") factor }
 expression: term   { ("+" | "-") term }
+statement:  IDENTIFIER = expression
 
 # 数字定义
 数     -> 0|1|2|3|4|5|6|7|8|9

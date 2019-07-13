@@ -6,6 +6,9 @@ pub enum Eval{  // 基础类型
 }
 
 impl Eval{
+    /**
+     * 数值计算
+     */
     pub fn cal(&self, op: Eval, right: Eval)->Eval{
         let left_val  = match self {
             Eval::TNumber(val) => val,
