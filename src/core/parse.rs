@@ -1,6 +1,7 @@
 use super::lexer::Lexer;
 
 use super::ast::astree::AstreeNode;
+use super::ast::program_root::ProgramRoot;
 use super::ast::expression_node::ExpressionNode;
 use super::ast::negative_number_node::NegativeNumberNode;
 use super::ast::number_leaf::NumberLeaf;
@@ -24,7 +25,21 @@ impl Parse{
         }
     }
 
-    pub fn statement(&mut self)->Box<AstreeNode>{
+    pub fn program(&mut self)->Box<AstreeNode>{
+        let mut program = ProgramRoot::new(vec![]);
+        loop {
+            if self.is_sep_token() {
+                self.token_sep();
+            }else if self.is_end_token(){
+                break;
+            }else{
+                program.push(self.statement());
+            }
+        }
+        return Box::new(program);
+    }
+
+    fn statement(&mut self)->Box<AstreeNode>{
         if self.next_is_token(1, "="){
             let left = self.indentidify();
             self.token("=");
@@ -36,7 +51,7 @@ impl Parse{
         }
     }
 
-    pub fn indentidify(&mut self)->Box<AstreeNode>{
+    fn indentidify(&mut self)->Box<AstreeNode>{
         let token = self.lexer.read();
         if token.is_identidify() {
             let id_leaf = IdentidifyLeaf::new(token);
@@ -46,7 +61,7 @@ impl Parse{
         }
     }
 
-    pub fn expression(&mut self)->Box<AstreeNode>{
+    fn expression(&mut self)->Box<AstreeNode>{
         let mut left = self.term();
         // println!("表达式：{:#?}", left);
         while self.is_token("+") || self.is_token("-") {
@@ -60,7 +75,7 @@ impl Parse{
         return left;
     }
 
-    pub fn term(&mut self)->Box<AstreeNode>{
+    fn term(&mut self)->Box<AstreeNode>{
         let mut left = self.factor();
         // println!("项：{:#?}", left);
         while self.is_token("*") || self.is_token("/") || self.is_token("%") {
@@ -74,7 +89,7 @@ impl Parse{
         return left;
     }
 
-    pub fn factor(&mut self)->Box<AstreeNode>{
+    fn factor(&mut self)->Box<AstreeNode>{
         if self.is_token("(") {
             self.token("(");
             let e = self.expression();
@@ -118,6 +133,42 @@ impl Parse{
         let token = self.lexer.peek(num);
         // println!("{}.{}:{:#?}", num, name, token);
         return token.get_text() == name;
+    }
+
+    /**
+     * 下一个字符是分隔符 \n 或 ; 或文件结束
+     */
+    fn is_sep_token(&mut self)->bool{
+        let token = self.lexer.peek(0);
+        return token.is_serarater();
+    }
+
+    /**
+     * 消耗分隔符token
+     */
+    fn token_sep(&mut self){
+        let token = self.lexer.read();
+        if !token.is_serarater() {
+            panic!(token.get_text().to_string() + "不是 \n ; 或文件结束符");
+        }
+    }
+
+    /**
+     * 是文件终结符
+     */
+    fn is_end_token(&mut self)->bool{
+        let token = self.lexer.peek(0);
+        return token.is_end();
+    }
+
+    /**
+     * 消耗文件终结符token
+     */
+    fn token_end(&mut self){
+        let token = self.lexer.read();
+        if !token.is_end() {
+            panic!("不是文件结束符");
+        }
     }
 
 }

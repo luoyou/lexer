@@ -12,7 +12,12 @@ pub struct IdentidifyLeaf{
 impl AstreeNode for IdentidifyLeaf{
     
     fn eval(&self, env: &mut Env)->Eval{
-        return env.get(&self.token.get_text().to_string());
+        let val = env.get(&self.token.get_text().to_string());
+        if val == Eval::TNil {
+            panic!(self.token.get_text().to_string() + "变量未定义就直接使用");
+        }else{
+            return val;
+        }
     }
 
     fn location(&self)->String{

@@ -5,7 +5,7 @@ pub enum TokenType{
     Identidify, // 标识符
     Number,     // 数字类型
     Comment,    // 注释
-    LineEnd,    // 行结束符
+    Separater,    // 行结束符
     End         // 文件结束符
 }
 
@@ -57,6 +57,16 @@ impl Token {
         };
     }
 
+    /**
+     * 是分隔符（）
+     */
+    pub fn is_serarater(&self)->bool{
+        match self.token_type {
+            TokenType::Separater => true,
+            _ => false
+        }
+    }
+
     // 存在行数，即不是空token，也不是文件结束符
     pub fn has_location(&self)->bool{
         return self.line_num != Token::EOF && self.line_num != Token::NOF;
@@ -80,7 +90,7 @@ impl Token {
             TokenType::Identidify => "标识符",
             TokenType::Number => "整数",
             TokenType::Comment => "注释",
-            TokenType::LineEnd => "行结束符",
+            TokenType::Separater => "行结束符",
             TokenType::End => "文件结束",
         }
     }

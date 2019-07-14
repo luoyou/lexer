@@ -76,8 +76,8 @@ impl Lexer{
 
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
             return Token::end();
-        } else if c.unwrap() == '\n'{
-            return Token::new(self.cur_line_num, '\n'.to_string(), TokenType::LineEnd);
+        } else if c.unwrap() == '\n' || c.unwrap() == ';'{
+            return Token::new(self.cur_line_num, c.unwrap().to_string(), TokenType::Separater);
         } else if c.unwrap() == '/'{
             word.push(c.unwrap());
             c = self.get_char();
