@@ -1,5 +1,6 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
+use super::env::Env;
 
 #[derive(Debug)]
 pub struct ExpressionNode {
@@ -9,10 +10,10 @@ pub struct ExpressionNode {
 
 impl AstreeNode for ExpressionNode{
 
-    fn eval(&self)->Eval{
-        let left  = self.children.get(0).unwrap().eval();
-        let op    = self.children.get(1).unwrap().eval();
-        let right = self.children.get(2).unwrap().eval();
+    fn eval(&self, env: &mut Env)->Eval{
+        let left  = self.children.get(0).unwrap().eval(env);
+        let op    = self.children.get(1).unwrap().eval(env);
+        let right = self.children.get(2).unwrap().eval(env);
         left.cal(op, right)
     }
 

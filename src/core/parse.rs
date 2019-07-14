@@ -5,6 +5,8 @@ use super::ast::expression_node::ExpressionNode;
 use super::ast::negative_number_node::NegativeNumberNode;
 use super::ast::number_leaf::NumberLeaf;
 use super::ast::op_leaf::OpLeaf;
+use super::ast::identidify_leaf::IdentidifyLeaf;
+use super::ast::statement_node::StatementNode;
 
 pub struct Parse{
     lexer: Lexer
@@ -19,6 +21,28 @@ impl Parse{
     pub fn new(lexer: Lexer)->Self{
         return Parse{
             lexer: lexer
+        }
+    }
+
+    pub fn statement(&mut self)->Box<AstreeNode>{
+        if self.next_is_token(1, "="){
+            let left = self.indentidify();
+            self.token("=");
+            let right = self.expression();
+            let statement = StatementNode::new(vec![left, right]);
+            return Box::new(statement);
+        }else{
+            return self.expression();
+        }
+    }
+
+    pub fn indentidify(&mut self)->Box<AstreeNode>{
+        let token = self.lexer.read();
+        if token.is_identidify() {
+            let id_leaf = IdentidifyLeaf::new(token);
+            return Box::new(id_leaf);
+        }else{
+            panic!("读取到的是非标识符");
         }
     }
 
@@ -65,9 +89,12 @@ impl Parse{
             return Box::new(negative_node);
         }else{
             let token = self.lexer.read();
+            // println!("{:#?}", token);
             if token.is_number() {
                 let num_leaf = NumberLeaf::new(token);
                 return Box::new(num_leaf);
+            }else if token.is_identidify(){
+                return Box::new(IdentidifyLeaf::new(token));
             }else{
                 panic!("读取到的是非数字字符");
             }
@@ -84,8 +111,12 @@ impl Parse{
 
     // 预读单词
     fn is_token(&mut self, name: &str)->bool{
-        let token = self.lexer.peek(0);
-        // println!("预读：{:#?}, name:{}", token, name);
+        return self.next_is_token(0, name);
+    }
+
+    fn next_is_token(&mut self, num: usize, name: &str)->bool{
+        let token = self.lexer.peek(num);
+        // println!("{}.{}:{:#?}", num, name, token);
         return token.get_text() == name;
     }
 

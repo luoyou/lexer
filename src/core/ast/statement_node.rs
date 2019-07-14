@@ -9,11 +9,10 @@ pub struct StatementNode {
 
 impl AstreeNode for StatementNode{
 
-    fn eval(&self, env: Env)->Eval{
-        let left  = self.children.get(0).unwrap().eval();
-        let op    = self.children.get(1).unwrap().eval();
-        let right = self.children.get(2).unwrap().eval();
-        env.put(left.to_string(), right.eval());
+    fn eval(&self, env: &mut Env)->Eval{
+        let left  = self.children.get(0).unwrap().to_string();
+        let right = self.children.get(1).unwrap().eval(env);
+        env.put(left, right);
         return Eval::TNil;
     }
 

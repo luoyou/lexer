@@ -34,7 +34,10 @@ impl Lexer{
     // 读取单词（消耗队列）
     pub fn read(&mut self)->Token{
         if self.fill_queue(0){
-            return self.keyword_queue.pop().unwrap();
+            return self.keyword_queue.remove(0);
+            // let xxx = self.keyword_queue.pop().unwrap();
+            // println!("{:#?}", xxx);
+            // return xxx;
         }else{
             return Token::end();
         }
@@ -68,12 +71,14 @@ impl Lexer{
             c = self.get_char();
             if !Lexer::is_skip_char(c) {
                 break;
-            }
+            } 
         }
 
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
             return Token::end();
-        }else if c.unwrap() == '/'{
+        } else if c.unwrap() == '\n'{
+            return Token::new(self.cur_line_num, '\n'.to_string(), TokenType::LineEnd);
+        } else if c.unwrap() == '/'{
             word.push(c.unwrap());
             c = self.get_char();
             if c != None && c.unwrap() == '/'{ // 达成单行注释条件
@@ -187,7 +192,7 @@ impl Lexer{
         self.last_char = c;
     }
 
-    // 是否是空格
+    // 是否是可跳过字符
     fn is_skip_char(c: Option<char>)->bool{
         return c != None && SKIP_CHARS.contains(&c.unwrap());
     }

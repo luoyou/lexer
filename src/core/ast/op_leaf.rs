@@ -1,6 +1,7 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
 use super::super::token::Token;
+use super::env::Env;
 
 #[derive(Debug)]
 pub struct OpLeaf{
@@ -8,7 +9,7 @@ pub struct OpLeaf{
 }
 
 impl AstreeNode for OpLeaf{
-    fn eval(&self)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         return Eval::TString(self.token.get_text().to_string());
     }
 

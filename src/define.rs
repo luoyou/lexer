@@ -61,6 +61,6 @@ pub const SINGLE_CHARS:[char; 17] = [
     '!'
 ];
 
-pub const SKIP_CHARS:[char; 4] = [
-    ' ', '\n', '\r', '\t'
+pub const SKIP_CHARS:[char; 3] = [
+    ' ', '\r', '\t'
 ];

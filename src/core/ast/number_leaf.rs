@@ -1,6 +1,7 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
 use super::super::token::Token;
+use super::env::Env;
 
 #[derive(Debug)]
 pub struct NumberLeaf{
@@ -9,7 +10,7 @@ pub struct NumberLeaf{
 
 
 impl AstreeNode for NumberLeaf{
-    fn eval(&self)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         return Eval::TNumber(self.token.get_text().parse().unwrap());
     }
 

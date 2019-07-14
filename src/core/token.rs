@@ -5,6 +5,7 @@ pub enum TokenType{
     Identidify, // 标识符
     Number,     // 数字类型
     Comment,    // 注释
+    LineEnd,    // 行结束符
     End         // 文件结束符
 }
 
@@ -39,14 +40,16 @@ impl Token {
         return Token::new(Token::NOF, "".to_string(), TokenType::Nothing);
     }
 
+    /**
+     * 获取token所在的行数
+     */
     pub fn get_line_num(&self)->i32{
         return self.line_num;
     }
 
-    pub fn get_type(&self)->&TokenType{
-        return &self.token_type;
-    }
-
+    /**
+     * 获取是否是终结符token
+     */
     pub fn is_end(&self)->bool{
         return match self.token_type {
             TokenType::End => true,
@@ -77,14 +80,27 @@ impl Token {
             TokenType::Identidify => "标识符",
             TokenType::Number => "整数",
             TokenType::Comment => "注释",
+            TokenType::LineEnd => "行结束符",
             TokenType::End => "文件结束",
         }
     }
 
-    // 判断是数字
+    /**
+     * 是数字类型的token，严格来说，目前是整数类型的token
+     */
     pub fn is_number(&self)->bool{
         match self.token_type {
             TokenType::Number => true,
+            _ => false
+        }
+    }
+
+    /**
+     * 是标识符token
+     */
+    pub fn is_identidify(&self)->bool{
+        match self.token_type {
+            TokenType::Identidify => true,
             _ => false
         }
     }

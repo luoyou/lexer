@@ -1,5 +1,6 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
+use super::env::Env;
 use super::super::token::Token;
 
 #[derive(Debug)]
@@ -9,6 +10,10 @@ pub struct IdentidifyLeaf{
 
 
 impl AstreeNode for IdentidifyLeaf{
+    
+    fn eval(&self, env: &mut Env)->Eval{
+        return env.get(&self.token.get_text().to_string());
+    }
 
     fn location(&self)->String{
         let mut location = "位于第".to_string();

@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Eval{  // 基础类型
     TNil,
     TNumber(i32),

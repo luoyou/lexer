@@ -5,6 +5,7 @@ mod core;
 mod define;
 use self::core::lexer::Lexer;
 use self::core::parse::Parse;
+use self::core::ast::env::Env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -33,6 +34,8 @@ fn test_ast_parse(){
     let file = File::open("stone/expr.txt").expect("未能打开文件");
     let lexer = Lexer::new(file);
     let mut parse = Parse::new(lexer);
-    let ast = parse.expression();
-    println!("语法分析结果：{:#?}", ast.eval());
+    let ast = parse.statement();
+    let mut env = Env::new();
+    println!("语法分析结果：{:#?}", ast.eval(&mut env));
+    println!("上下文变量：{:#?}", env);
 }
