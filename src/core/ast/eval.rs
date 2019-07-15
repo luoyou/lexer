@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum Eval{  // 基础类型
     TNil,
+    TBool(bool),
     TNumber(i32),
     TString(String)
 }
@@ -23,11 +24,12 @@ impl Eval{
             _ => panic!("数字出错")
         };
         match &*op_val {
-            "+" => Eval::TNumber(left_val + right_val),
-            "-" => Eval::TNumber(left_val - right_val),
-            "*" => Eval::TNumber(left_val * right_val),
-            "/" => Eval::TNumber(left_val / right_val),
-            "%" => Eval::TNumber(left_val % right_val),
+            "+"  => Eval::TNumber(left_val + right_val),
+            "-"  => Eval::TNumber(left_val - right_val),
+            "*"  => Eval::TNumber(left_val * right_val),
+            "/"  => Eval::TNumber(left_val / right_val),
+            "%"  => Eval::TNumber(left_val % right_val),
+            "==" => Eval::TBool(*left_val == right_val),
             _ => panic!("未支持的运算符")
         }
         

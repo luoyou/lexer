@@ -17,28 +17,9 @@ impl AstreeNode for ExpressionNode{
         left.cal(op, right)
     }
 
-    fn location(&self)->String{
-        for node in &self.children{
-            let s = node.location();
-            if s != "".to_string() {
-                return s;
-            }
-        }
-        return "".to_string();
+    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+        return &self.children;
     }
-
-    fn to_string(&self)->String{
-        let mut builder = String::from("(");
-        let mut sep = "";
-        for node in &self.children{
-            builder.push_str(sep);
-            sep = " ";
-            builder.push_str(&node.to_string());
-        }
-        builder.push(')');
-        return builder;
-    }
-
 }
 
 impl ExpressionNode{

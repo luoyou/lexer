@@ -18,20 +18,8 @@ impl AstreeNode for NegativeNumberNode{
         }
     }
 
-    fn location(&self)->String{
-        return "".to_string();
-    }
-
-    fn to_string(&self)->String{
-        let mut builder = String::from("(");
-        let mut sep = "";
-        for node in &self.children{
-            builder.push_str(sep);
-            sep = " ";
-            builder.push_str(&node.to_string());
-        }
-        builder.push(')');
-        return builder;
+    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+        return &self.children;
     }
 }
 impl NegativeNumberNode{

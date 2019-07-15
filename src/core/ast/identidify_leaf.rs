@@ -20,6 +20,10 @@ impl AstreeNode for IdentidifyLeaf{
         }
     }
 
+    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+        panic!("标识符下没有子节点")
+    }
+
     fn location(&self)->String{
         let mut location = "位于第".to_string();
         if self.token.has_location(){
@@ -36,6 +40,7 @@ impl AstreeNode for IdentidifyLeaf{
         return self.token.get_text().to_string();
     }
 }
+
 impl IdentidifyLeaf{
     pub fn new(token: Token)->Self{
         IdentidifyLeaf{

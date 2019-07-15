@@ -14,7 +14,29 @@ pub trait AstreeNode: Debug{
     //     return vec![];
     // }
 
-    fn location(&self)->String;
+    fn get_children(&self)->&Vec<Box<AstreeNode>>;
 
-    fn to_string(&self)->String;
+    fn location(&self)->String{
+        let nodes = self.get_children();
+        for node in nodes{
+            let s = node.location();
+            if s != "".to_string() {
+                return s;
+            }
+        }
+        return "".to_string();
+    }
+
+    fn to_string(&self)->String{
+        let mut builder = String::from("(");
+        let mut sep = "";
+        let nodes = self.get_children();
+        for node in nodes{
+            builder.push_str(sep);
+            sep = " ";
+            builder.push_str(&node.to_string());
+        }
+        builder.push(')');
+        return builder;
+    }
 }

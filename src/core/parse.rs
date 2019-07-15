@@ -8,6 +8,8 @@ use super::ast::number_leaf::NumberLeaf;
 use super::ast::op_leaf::OpLeaf;
 use super::ast::identidify_leaf::IdentidifyLeaf;
 use super::ast::statement_node::StatementNode;
+use super::ast::if_node::IfNode;
+use super::ast::block_node::BlockNode;
 
 pub struct Parse{
     lexer: Lexer
@@ -40,7 +42,9 @@ impl Parse{
     }
 
     fn statement(&mut self)->Box<AstreeNode>{
-        if self.next_is_token(1, "="){
+        if self.is_token("if") || self.is_token("如果") {
+            return self.if_statement();
+        }else if self.next_is_token(1, "="){
             let left = self.indentidify();
             self.token("=");
             let right = self.expression();
@@ -49,6 +53,34 @@ impl Parse{
         }else{
             return self.expression();
         }
+    }
+
+    fn if_statement(&mut self)->Box<AstreeNode>{
+        self.tokens(vec!["if", "如果"]);
+        let mut statements: Vec<Box<AstreeNode>> = Vec::new();
+        statements.push(self.expression());
+        statements.push(self.block()); 
+        if self.is_token("else") || self.is_token("否则") {
+            self.tokens(vec!["else", "否则"]);
+            statements.push(self.block());
+        }
+        return Box::new(IfNode::new(statements));
+    }
+
+    fn block(&mut self)->Box<AstreeNode>{
+        self.token("{");
+        let mut statements: Vec<Box<AstreeNode>> = Vec::new();
+        loop {
+            if self.is_token("}") {
+                self.token("}");
+                break;
+            }else if self.is_sep_token() {
+                self.token_sep(); // 遇到分隔符则消耗掉
+            }else{
+                statements.push(self.statement());
+            }
+        }
+        return Box::new(BlockNode::new(statements));
     }
 
     fn indentidify(&mut self)->Box<AstreeNode>{
@@ -64,7 +96,7 @@ impl Parse{
     fn expression(&mut self)->Box<AstreeNode>{
         let mut left = self.term();
         // println!("表达式：{:#?}", left);
-        while self.is_token("+") || self.is_token("-") {
+        while self.is_token("+") || self.is_token("-") || self.is_token("==") {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.term();
             let expr_node = ExpressionNode::new(
@@ -113,6 +145,23 @@ impl Parse{
             }else{
                 panic!("读取到的是非数字字符");
             }
+        }
+    }
+
+    /**
+     * 当多个单词同义的时候，能直接消除
+     */
+    fn tokens(&mut self, names: Vec<&str>){
+        let mut tokened = false;
+        for name in &names {
+            if self.is_token(name) {
+                self.token(name);
+                tokened = true;
+                break;
+            }
+        }
+        if tokened == false {
+            panic!("读取单词错误！");
         }
     }
 

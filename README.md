@@ -66,6 +66,7 @@ return   返回
 巴斯特范式，语法定义范式：
 
 ```
+# 参照版本
 primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
 factor    : "-" primary | primary
 term      : factor { ("*" | "/" | "%") factor }
@@ -78,12 +79,14 @@ statement : "if" expr block [ "else" block]
 program   : [statement] (";" | EOL)
 
 
-# 此处是仅四则运算的版本
-factor     : NUMBER | IDENTIFIER | "(" expression ")" | - factor
-term       : factor { ("*" | "/" | "%") factor }
-expression : term   { ("+" | "-") term }
-statement  : IDENTIFIER = expression | expression 
-program    : [statement] (";" | EOL)
+# 渐进更新版本
+factor       : NUMBER | IDENTIFIER | "(" expression ")" | - factor
+term         : factor { ("*" | "/" | "%") factor }
+expression   : term   { ("+" | "-" | "==") term }
+if_statement : "if" expr block [ "else" block]
+block        : "{" [statement] { (";" | EOL) [ statement ] } "}"
+statement    : IDENTIFIER = expression | expression | if_statement
+program      : [statement] (";" | EOL)
 
 # 数字定义
 数     -> 0|1|2|3|4|5|6|7|8|9

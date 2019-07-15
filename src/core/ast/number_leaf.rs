@@ -14,6 +14,10 @@ impl AstreeNode for NumberLeaf{
         return Eval::TNumber(self.token.get_text().parse().unwrap());
     }
 
+    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+        panic!("数字没有子节点")
+    }
+
     fn location(&self)->String{
         let mut location = "位于第".to_string();
         if self.token.has_location(){

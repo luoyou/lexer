@@ -13,6 +13,10 @@ impl AstreeNode for OpLeaf{
         return Eval::TString(self.token.get_text().to_string());
     }
 
+    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+        panic!("操作符下没有子节点")
+    }
+
     fn location(&self)->String{
         let mut location = "位于第".to_string();
         if self.token.has_location(){
