@@ -80,13 +80,14 @@ program   : [statement] (";" | EOL)
 
 
 # 渐进更新版本
-factor       : NUMBER | IDENTIFIER | "(" expression ")" | - factor
-term         : factor { ("*" | "/" | "%") factor }
-expression   : term   { ("+" | "-" | "==") term }
-if_statement : "if" expr block [ "else" block]
-block        : "{" [statement] { (";" | EOL) [ statement ] } "}"
-statement    : IDENTIFIER = expression | expression | if_statement
-program      : [statement] (";" | EOL)
+program         : [statement] (";" | EOL)
+statement       : expression | IDENTIFIER = expression | if_statement | while_statement
+if_statement    : "if" expr block [ "else" block]
+while_statement : "while" expr block
+block           : "{" [statement] { (";" | EOL) [ statement ] } "}"\
+expression      : term   { ("+" | "-" | "==" | ">" | ">=" | "<" | "<=" | "&&" | "||" | "!") term }
+term            : factor { ("*" | "/" | "%") factor }
+factor          : NUMBER | IDENTIFIER | BOOL | "(" expression ")" | - factor | ! factor
 
 # 数字定义
 数     -> 0|1|2|3|4|5|6|7|8|9

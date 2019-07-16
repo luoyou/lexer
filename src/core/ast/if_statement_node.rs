@@ -3,15 +3,14 @@ use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
-pub struct IfNode {
+pub struct IfStatementNode {
     children: Vec<Box<AstreeNode>>
 }
 
 
-impl AstreeNode for IfNode{
+impl AstreeNode for IfStatementNode{
 
     /**
-     * todo 需要先支持表达式的全等符
      */
     fn eval(&self, env: &mut Env)->Eval{
         let condition  = self.children.get(0).unwrap().eval(env);
@@ -32,9 +31,9 @@ impl AstreeNode for IfNode{
     }
 }
 
-impl IfNode{
+impl IfStatementNode{
     pub fn new(children: Vec<Box<AstreeNode>>)->Self{
-        return IfNode{
+        return IfStatementNode{
             children: children
         }
     }

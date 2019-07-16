@@ -30,6 +30,10 @@ impl Eval{
             "/"  => Eval::TNumber(left_val / right_val),
             "%"  => Eval::TNumber(left_val % right_val),
             "==" => Eval::TBool(*left_val == right_val),
+            ">"  => Eval::TBool(*left_val >  right_val),
+            ">=" => Eval::TBool(*left_val >= right_val),
+            "<"  => Eval::TBool(*left_val <  right_val),
+            "<=" => Eval::TBool(*left_val <= right_val),
             _ => panic!("未支持的运算符")
         }
         

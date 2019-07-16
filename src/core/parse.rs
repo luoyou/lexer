@@ -8,7 +8,8 @@ use super::ast::number_leaf::NumberLeaf;
 use super::ast::op_leaf::OpLeaf;
 use super::ast::identidify_leaf::IdentidifyLeaf;
 use super::ast::statement_node::StatementNode;
-use super::ast::if_node::IfNode;
+use super::ast::if_statement_node::IfStatementNode;
+use super::ast::while_statement_node::WhileStatementNode;
 use super::ast::block_node::BlockNode;
 
 pub struct Parse{
@@ -44,6 +45,8 @@ impl Parse{
     fn statement(&mut self)->Box<AstreeNode>{
         if self.is_token("if") || self.is_token("如果") {
             return self.if_statement();
+        }else if self.is_token("while") || self.is_token("当"){
+            return self.while_statement();
         }else if self.next_is_token(1, "="){
             let left = self.indentidify();
             self.token("=");
@@ -64,7 +67,14 @@ impl Parse{
             self.tokens(vec!["else", "否则"]);
             statements.push(self.block());
         }
-        return Box::new(IfNode::new(statements));
+        return Box::new(IfStatementNode::new(statements));
+    }
+
+    fn while_statement(&mut self)->Box<AstreeNode>{
+        self.tokens(vec!["while", "当"]);
+        let expr  = self.expression();
+        let block = self.block();
+        return Box::new(WhileStatementNode::new(vec![expr, block]));
     }
 
     fn block(&mut self)->Box<AstreeNode>{
@@ -96,7 +106,7 @@ impl Parse{
     fn expression(&mut self)->Box<AstreeNode>{
         let mut left = self.term();
         // println!("表达式：{:#?}", left);
-        while self.is_token("+") || self.is_token("-") || self.is_token("==") {
+        while self.is_tokens(vec!["+", "-", "==", ">", ">=", "<", "<="]) {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.term();
             let expr_node = ExpressionNode::new(
@@ -134,9 +144,16 @@ impl Parse{
                 vec![Box::new(op), factor]
             );
             return Box::new(negative_node);
+        }else if self.is_token("!"){
+            let op = OpLeaf::new(self.lexer.read());
+            let factor = self.factor();
+            let negative_node = NegativeNumberNode::new(
+                vec![Box::new(op), factor]
+            );
+            return Box::new(negative_node);
         }else{
             let token = self.lexer.read();
-            // println!("{:#?}", token);
+            println!("{:#?}", token);
             if token.is_number() {
                 let num_leaf = NumberLeaf::new(token);
                 return Box::new(num_leaf);
@@ -171,6 +188,18 @@ impl Parse{
         if token.get_text() != name {
             panic!(token.get_text().to_string() + "读取单词错误，此处应为：" + name);
         }
+    }
+
+    /**
+     * 预读多个单词，判断是该单词
+     */
+    fn is_tokens(&mut self, names: Vec<&str>)->bool{
+        for name in &names {
+            if self.is_token(name) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // 预读单词

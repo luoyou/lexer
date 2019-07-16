@@ -31,7 +31,7 @@ fn test_lexer(){
 
 // 语法分析测试
 fn test_ast_parse(){
-    let file = File::open("stone/expr.txt").expect("未能打开文件");
+    let file = File::open("stone/demo.txt").expect("未能打开文件");
     let lexer = Lexer::new(file);
     let mut parse = Parse::new(lexer);
     let ast = parse.program();
