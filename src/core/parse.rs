@@ -153,7 +153,7 @@ impl Parse{
             return Box::new(negative_node);
         }else{
             let token = self.lexer.read();
-            println!("{:#?}", token);
+            // println!("{:#?}", token);
             if token.is_number() {
                 let num_leaf = NumberLeaf::new(token);
                 return Box::new(num_leaf);

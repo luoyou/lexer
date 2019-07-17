@@ -8,10 +8,13 @@ use self::core::parse::Parse;
 use self::core::ast::env::Env;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
+    let mut args: Vec<String> = env::args().collect();
+    if args.len() <= 1 {
+        panic!("请输入文件名");
+    }
     // test_lexer();
-    test_ast_parse();
+    let file_path = args.pop().unwrap();
+    test_ast_parse(&file_path);
 }
 
 // 词法分析测试
@@ -30,8 +33,8 @@ fn test_lexer(){
 }
 
 // 语法分析测试
-fn test_ast_parse(){
-    let file = File::open("stone/demo.txt").expect("未能打开文件");
+fn test_ast_parse(file_path: &str){
+    let file = File::open(file_path).expect("未能打开文件");
     let lexer = Lexer::new(file);
     let mut parse = Parse::new(lexer);
     let ast = parse.program();
