@@ -4,6 +4,8 @@ use super::ast::astree::AstreeNode;
 use super::ast::program_root::ProgramRoot;
 use super::ast::expression_node::ExpressionNode;
 use super::ast::negative_number_node::NegativeNumberNode;
+use super::ast::bool_leaf::BoolLeaf;
+use super::ast::not_bool_node::NotBoolNode;
 use super::ast::number_leaf::NumberLeaf;
 use super::ast::op_leaf::OpLeaf;
 use super::ast::identidify_leaf::IdentidifyLeaf;
@@ -99,14 +101,29 @@ impl Parse{
             let id_leaf = IdentidifyLeaf::new(token);
             return Box::new(id_leaf);
         }else{
+            println!("{:#?}", token);
             panic!("读取到的是非标识符");
         }
     }
 
     fn expression(&mut self)->Box<AstreeNode>{
+        let mut left = self.logical();
+        // println!("表达式：{:#?}", left);
+        while self.is_tokens(vec!["&&" , "||"]) {
+            let op = OpLeaf::new(self.lexer.read());
+            let right = self.logical();
+            let expr_node = ExpressionNode::new(
+                vec![left, Box::new(op), right]
+            );
+            left = Box::new(expr_node);
+        }
+        return left;
+    }
+
+    fn logical(&mut self)->Box<AstreeNode>{
         let mut left = self.comparison();
         // println!("表达式：{:#?}", left);
-        while self.is_tokens(vec!["==", ">", ">=", "<", "<=", "&&" , "||"]) {
+        while self.is_tokens(vec!["==", ">", ">=", "<", "<="]) {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.comparison();
             let expr_node = ExpressionNode::new(
@@ -160,10 +177,13 @@ impl Parse{
         }else if self.is_token("!"){
             let op = OpLeaf::new(self.lexer.read());
             let factor = self.factor();
-            let negative_node = NegativeNumberNode::new(
+            let negative_node = NotBoolNode::new(
                 vec![Box::new(op), factor]
             );
             return Box::new(negative_node);
+        }else if self.is_tokens(vec!["true", "false", "真", "假"]){
+            let bool_leaf = BoolLeaf::new(self.lexer.read());
+            return Box::new(bool_leaf);
         }else{
             let token = self.lexer.read();
             // println!("{:#?}", token);
@@ -173,6 +193,7 @@ impl Parse{
             }else if token.is_identidify(){
                 return Box::new(IdentidifyLeaf::new(token));
             }else{
+                println!("{:#?}", token);
                 panic!("读取到的是非数字字符");
             }
         }

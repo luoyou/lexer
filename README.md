@@ -85,7 +85,8 @@ statement       : expression | IDENTIFIER = expression | if_statement | while_st
 if_statement    : "if" expr block [ "else" block]
 while_statement : "while" expr block
 block           : "{" [statement] { (";" | EOL) [ statement ] } "}"
-expression      : comparison { ("==" | ">" | ">=" | "<" | "<=" | "&&" | "||") comparison }
+expression      : logical { ("&&" | "||") logical }
+logical         : comparison { ("==" | ">" | ">=" | "<" | "<=") comparison }
 comparison      : term   { ("+" | "-") term }
 term            : factor { ("*" | "/" | "%") factor }
 factor          : NUMBER | IDENTIFIER | BOOL | "(" expression ")" | - factor | ! factor
