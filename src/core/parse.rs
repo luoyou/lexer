@@ -104,9 +104,22 @@ impl Parse{
     }
 
     fn expression(&mut self)->Box<AstreeNode>{
-        let mut left = self.term();
+        let mut left = self.comparison();
         // println!("表达式：{:#?}", left);
-        while self.is_tokens(vec!["+", "-", "==", ">", ">=", "<", "<="]) {
+        while self.is_tokens(vec!["==", ">", ">=", "<", "<=", "&&" , "||"]) {
+            let op = OpLeaf::new(self.lexer.read());
+            let right = self.comparison();
+            let expr_node = ExpressionNode::new(
+                vec![left, Box::new(op), right]
+            );
+            left = Box::new(expr_node);
+        }
+        return left;
+    }
+
+    fn comparison(&mut self)->Box<AstreeNode>{
+        let mut left = self.term();
+        while self.is_tokens(vec!["+", "-"]) {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.term();
             let expr_node = ExpressionNode::new(

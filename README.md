@@ -84,8 +84,9 @@ program         : [statement] (";" | EOL)
 statement       : expression | IDENTIFIER = expression | if_statement | while_statement
 if_statement    : "if" expr block [ "else" block]
 while_statement : "while" expr block
-block           : "{" [statement] { (";" | EOL) [ statement ] } "}"\
-expression      : term   { ("+" | "-" | "==" | ">" | ">=" | "<" | "<=" | "&&" | "||" | "!") term }
+block           : "{" [statement] { (";" | EOL) [ statement ] } "}"
+expression      : comparison { ("==" | ">" | ">=" | "<" | "<=" | "&&" | "||") comparison }
+comparison      : term   { ("+" | "-") term }
 term            : factor { ("*" | "/" | "%") factor }
 factor          : NUMBER | IDENTIFIER | BOOL | "(" expression ")" | - factor | ! factor
 

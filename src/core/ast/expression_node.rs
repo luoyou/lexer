@@ -14,7 +14,7 @@ impl AstreeNode for ExpressionNode{
         let left  = self.children.get(0).unwrap().eval(env);
         let op    = self.children.get(1).unwrap().eval(env);
         let right = self.children.get(2).unwrap().eval(env);
-        left.cal(op, right)
+        op.cal(left, right)
     }
 
     fn get_children(&self)->&Vec<Box<AstreeNode>>{
