@@ -3,16 +3,16 @@ pub enum TokenType{
     Nothing,    // 空关键词
     Keyword,    // 关键字
     Identidify, // 标识符
+    Text,       // 文本（字符串）
     Number,     // 数字类型
-    Comment,    // 注释
-    Separater,    // 行结束符
+    Separater,  // 行结束符
     End         // 文件结束符
 }
 
 // 单词结构，后续还会加上列数
 #[derive(Debug, Clone)]
 pub struct Token{
-    line_num: i32,  // 位于第几行
+    line_num: i32,   // 位于第几行
     text: String,    // 文字是什么
     token_type: TokenType
 }
@@ -72,12 +72,12 @@ impl Token {
         return self.line_num != Token::EOF && self.line_num != Token::NOF;
     }
 
-    pub fn is_nothing(&self)->bool{
-        return match self.token_type {
-            TokenType::Nothing => true,
-            _ => false
-        };
-    }
+    // pub fn is_nothing(&self)->bool{
+    //     return match self.token_type {
+    //         TokenType::Nothing => true,
+    //         _ => false
+    //     };
+    // }
 
     pub fn get_text(&self)->&str{
         return &self.text;
@@ -89,7 +89,7 @@ impl Token {
             TokenType::Keyword => "关键字",
             TokenType::Identidify => "标识符",
             TokenType::Number => "整数",
-            TokenType::Comment => "注释",
+            TokenType::Text => "文本",
             TokenType::Separater => "行结束符",
             TokenType::End => "文件结束",
         }
@@ -111,6 +111,13 @@ impl Token {
     pub fn is_identidify(&self)->bool{
         match self.token_type {
             TokenType::Identidify => true,
+            _ => false
+        }
+    }
+
+    pub fn is_text(&self)->bool{
+        match self.token_type {
+            TokenType::Text => true,
             _ => false
         }
     }

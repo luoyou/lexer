@@ -4,7 +4,7 @@ use super::env::Env;
 
 
 pub trait AstreeNode: Debug{
-    fn eval(&self, env: &mut Env)->Eval{
+    fn eval(&self, _: &mut Env)->Eval{
         panic!("本类型不支持求值")
     }
 

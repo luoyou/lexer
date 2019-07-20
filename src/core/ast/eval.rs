@@ -3,7 +3,7 @@ pub enum Eval{  // 基础类型
     TNil,
     TBool(bool),
     TNumber(i32),
-    TString(String)
+    TText(String)
 }
 
 impl Eval{
@@ -12,7 +12,7 @@ impl Eval{
      */
     pub fn cal(&self, left: Eval, right: Eval)->Eval{
         let op_val = match self {
-            Eval::TString(o) => o,
+            Eval::TText(o) => o,
             _ => panic!("符号出错")
         };
         match &**op_val {

@@ -7,6 +7,7 @@ use super::ast::negative_number_node::NegativeNumberNode;
 use super::ast::bool_leaf::BoolLeaf;
 use super::ast::not_bool_node::NotBoolNode;
 use super::ast::number_leaf::NumberLeaf;
+use super::ast::text_leaf::TextLeaf;
 use super::ast::op_leaf::OpLeaf;
 use super::ast::identidify_leaf::IdentidifyLeaf;
 use super::ast::statement_node::StatementNode;
@@ -192,9 +193,11 @@ impl Parse{
                 return Box::new(num_leaf);
             }else if token.is_identidify(){
                 return Box::new(IdentidifyLeaf::new(token));
+            }else if token.is_text(){
+                return Box::new(TextLeaf::new(token));
             }else{
                 println!("{:#?}", token);
-                panic!("读取到的是非数字字符");
+                panic!("读取到的是未识别字符");
             }
         }
     }

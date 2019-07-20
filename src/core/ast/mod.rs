@@ -10,6 +10,7 @@ pub mod if_statement_node;
 pub mod while_statement_node;
 pub mod block_node;
 pub mod bool_leaf;
+pub mod text_leaf;
 pub mod not_bool_node;
 pub mod eval;
 pub mod env;

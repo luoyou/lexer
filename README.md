@@ -86,10 +86,10 @@ if_statement    : "if" expr block [ "else" block]
 while_statement : "while" expr block
 block           : "{" [statement] { (";" | EOL) [ statement ] } "}"
 expression      : logical { ("&&" | "||") logical }
-logical         : comparison { ("==" | ">" | ">=" | "<" | "<=") comparison }
+logical         : comparison { ("==" | "!=" | ">" | ">=" | "<" | "<=") comparison }
 comparison      : term   { ("+" | "-") term }
 term            : factor { ("*" | "/" | "%") factor }
-factor          : NUMBER | IDENTIFIER | BOOL | "(" expression ")" | - factor | ! factor
+factor          : NUMBER | STRING | BOOL | IDENTIFIER | "(" expression ")" | - factor | ! factor
 
 # 数字定义
 数     -> 0|1|2|3|4|5|6|7|8|9

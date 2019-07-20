@@ -10,7 +10,7 @@ pub struct NumberLeaf{
 
 
 impl AstreeNode for NumberLeaf{
-    fn eval(&self, env: &mut Env)->Eval{
+    fn eval(&self, _: &mut Env)->Eval{
         return Eval::TNumber(self.token.get_text().parse().unwrap());
     }
 

@@ -52,6 +52,9 @@ impl Lexer{
         }
     }
 
+    /**
+     * 当单词队列不足时，填充队列
+     */
     fn fill_queue(&mut self, num: usize)->bool{
         while num >= self.keyword_queue.len() {
             let token = self.next_token();
@@ -64,6 +67,9 @@ impl Lexer{
         return true;
     }
 
+    /**
+     * 读取下一个单词，填充队列
+     */
     fn next_token(&mut self)->Token{
         let mut word = String::from("");
         let mut c:Option<char>;
@@ -127,9 +133,24 @@ impl Lexer{
                 self.unget_char(c);
             }
             return Token::new(self.cur_line_num, word, TokenType::Keyword);
+        }else if c.unwrap() == '!' {
+            word.push(c.unwrap());
+            c = self.get_char();
+            if c != None && c.unwrap() == '='{
+                word.push(c.unwrap());
+            }else{
+                self.unget_char(c);
+            }
+            return Token::new(self.cur_line_num, word, TokenType::Keyword);
         }else if Lexer::is_single_signal(c) { // 是+,{,}，直接返回
             word.push(c.unwrap());
             return Token::new(self.cur_line_num, word, TokenType::Keyword);
+        }else if c.unwrap() == '\'' || c.unwrap() == '"'{
+            return self.lexer_text(c);
+        }else if c.unwrap() == '「' {
+            return self.lexer_text(Some('」'));
+        }else if c.unwrap() == '『' {
+            return self.lexer_text(Some('』'));
         }else{
             word.push(c.unwrap()); // 其他的情况，统一推入字符串
             loop{
@@ -147,6 +168,30 @@ impl Lexer{
         }else{
             return Token::new(self.cur_line_num, word, TokenType::Identidify);
         }
+    }
+
+    fn lexer_text(&mut self, end_char: Option<char>)->Token{
+        let mut word = String::from("");
+        loop {
+            let c = self.get_char();
+            // println!("{:#?}", c);
+            if c == None {
+                panic!(word + " 不是一个完整的文本标识");
+            }else if c.unwrap() == '\\'{
+                let next_c = self.get_char();
+                if next_c == end_char {
+                    word.push(next_c.unwrap());
+                    continue;
+                }else{
+                    self.unget_char(next_c);
+                }
+            }else if c != end_char {
+                word.push(c.unwrap());
+            }else{
+                break;
+            }
+        }
+        return Token::new(self.cur_line_num, word, TokenType::Text);
     }
 
     fn get_char(&mut self)->Option<char>{

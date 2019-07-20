@@ -1,27 +1,21 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
-use super::env::Env;
 use super::super::token::Token;
+use super::env::Env;
 
 #[derive(Debug)]
-pub struct BoolLeaf{
+pub struct TextLeaf{
     token: Token
 }
 
 
-impl AstreeNode for BoolLeaf{
-    
+impl AstreeNode for TextLeaf{
     fn eval(&self, _: &mut Env)->Eval{
-        let val = self.token.get_text();
-        if val == "true" || val == "真" {
-            return Eval::TBool(true);
-        }else{
-            return Eval::TBool(false);
-        }
+        return Eval::TText(self.token.get_text().to_string());
     }
 
     fn get_children(&self)->&Vec<Box<AstreeNode>>{
-        panic!("逻辑值下没有子节点")
+        panic!("文本类型没有子节点")
     }
 
     fn location(&self)->String{
@@ -40,10 +34,9 @@ impl AstreeNode for BoolLeaf{
         return self.token.get_text().to_string();
     }
 }
-
-impl BoolLeaf{
+impl TextLeaf{
     pub fn new(token: Token)->Self{
-        BoolLeaf{
+        TextLeaf{
             token 
         }
     }
