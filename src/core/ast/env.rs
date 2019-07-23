@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use super::eval::Eval;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Env{
     values: HashMap<String, Eval>
 }

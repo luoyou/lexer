@@ -12,5 +12,7 @@ pub mod block_node;
 pub mod bool_leaf;
 pub mod text_leaf;
 pub mod not_bool_node;
+pub mod fn_node;
+pub mod param_list_node;
 pub mod eval;
 pub mod env;

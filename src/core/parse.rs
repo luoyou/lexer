@@ -14,6 +14,8 @@ use super::ast::statement_node::StatementNode;
 use super::ast::if_statement_node::IfStatementNode;
 use super::ast::while_statement_node::WhileStatementNode;
 use super::ast::block_node::BlockNode;
+use super::ast::fn_node::FnNode;
+use super::ast::param_list_node::ParamListNode;
 
 pub struct Parse{
     lexer: Lexer
@@ -38,6 +40,8 @@ impl Parse{
                 self.token_sep();
             }else if self.is_end_token(){
                 break;
+            }else if self.is_tokens(vec!["fn", "函数"]){
+                program.push(self.fn_statement());
             }else{
                 program.push(self.statement());
             }
@@ -59,6 +63,29 @@ impl Parse{
         }else{
             return self.expression();
         }
+    }
+
+    fn fn_statement(&mut self)->Box<AstreeNode>{
+        self.tokens(vec!["fn", "函数"]);
+        let fn_name = self.indentidify();
+        let params_list = self.params_list();
+        let block = self.block();
+        return Box::new(FnNode::new(vec![fn_name, params_list, block]));
+    }
+
+    fn params_list(&mut self)->Box<AstreeNode>{
+        self.token("(");
+        let mut params_list:Vec<Box<AstreeNode>> = Vec::new();
+        while self.next_token_is_indentidify(0) {
+            params_list.push(self.indentidify());
+            if self.is_token(",") {
+                self.token(",");
+            }else{
+                break;
+            }
+        }
+        self.token(")");
+        return Box::new(ParamListNode::new(params_list));
     }
 
     fn if_statement(&mut self)->Box<AstreeNode>{
@@ -248,6 +275,11 @@ impl Parse{
         let token = self.lexer.peek(num);
         // println!("{}.{}:{:#?}", num, name, token);
         return token.get_text() == name;
+    }
+
+    fn next_token_is_indentidify(&mut self, num: usize)->bool{
+        let token = self.lexer.peek(num);
+        return token.is_identidify();
     }
 
     /**

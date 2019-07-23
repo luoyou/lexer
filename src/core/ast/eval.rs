@@ -1,9 +1,12 @@
+use super::env::Env;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Eval{  // 基础类型
     TNil,
     TBool(bool),
     TNumber(i32),
-    TText(String)
+    TText(String),
+    TFn(Env)
 }
 
 impl Eval{

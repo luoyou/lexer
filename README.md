@@ -1,4 +1,4 @@
-﻿lexer 分词算法
+lexer 分词算法
 ---
 ## 符号系统
 ```
@@ -66,20 +66,29 @@ return   返回
 巴斯特范式，语法定义范式：
 
 ```
-# 参照版本
-primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
-factor    : "-" primary | primary
-term      : factor { ("*" | "/" | "%") factor }
-expr      :  term { ("+" | "-") term}
-block     : "{" [statement] { (";" | EOL) [ statement ] } "}"
-assign    : IDENTIFIER = expr
-statement : "if" expr block [ "else" block]
-            | "while" expr block
-            | assign
-program   : [statement] (";" | EOL)
+# 函数支持
+program         : [statement | fn] (";" | EOL)
+statement       : expression [args] | IDENTIFIER = expression | if_statement | while_statement
+if_statement    : "if" expr block [ "else" block]
+while_statement : "while" expr block
+block           : "{" [statement] { (";" | EOL) [ statement ] } "}"
+
+fn_statement : "fn" IDENTIFIER param_list block
+param_list   : "(" [params] ")"
+params       : param {"," param}
+param        : IDENTIFIER
+args         : expression {, expression}
+postfix      : "(" [args] ")"
+
+expression      : logical { ("&&" | "||") logical }
+logical         : comparison { ("==" | "!=" | ">" | ">=" | "<" | "<=") comparison }
+comparison      : term   { ("+" | "-") term }
+term            : factor { ("*" | "/" | "%") factor }
+
+factor     : NUMBER | STRING | BOOL | IDENTIFIER | "(" expression ")" | - factor | ! factor | (IDENTIFIER { postfix })
 
 
-# 渐进更新版本
+# 第一版 基础：顺序，分支，循环
 program         : [statement] (";" | EOL)
 statement       : expression | IDENTIFIER = expression | if_statement | while_statement
 if_statement    : "if" expr block [ "else" block]
@@ -96,3 +105,11 @@ factor          : NUMBER | STRING | BOOL | IDENTIFIER | "(" expression ")" | - f
 整数   -> 数 数*
 有理数 -> 整数 | (整数'.'整数)
 ```
+
+### BNF 范式元符号
+| 符号 | 说明 |
+|:---|:---|
+| {pat} | 模式pat至少重复0次  |
+| [pat] | 模式pat重复0次或1次 |
+| pat1 | pat2 | 与pat1或pat2匹配 |
+| { } | { }内是一个完整的模式 |
