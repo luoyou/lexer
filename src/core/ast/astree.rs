@@ -14,6 +14,13 @@ pub trait AstreeNode: Debug{
     //     return vec![];
     // }
 
+    /**
+     * 获取标识符的名字，函数名，变量名，类名
+     */
+    fn get_id_name(&self)->String{
+        panic!("该类型不支持获取标识名");
+    }
+
     fn get_children(&self)->&Vec<Box<AstreeNode>>;
 
     fn location(&self)->String{

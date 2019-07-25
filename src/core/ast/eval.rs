@@ -5,8 +5,7 @@ pub enum Eval{  // 基础类型
     TNil,
     TBool(bool),
     TNumber(i32),
-    TText(String),
-    TFn(Env)
+    TText(String)
 }
 
 impl Eval{

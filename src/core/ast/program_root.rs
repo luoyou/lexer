@@ -1,10 +1,12 @@
 use super::astree::AstreeNode;
 use super::eval::Eval;
 use super::env::Env;
+use super::fn_map::FnMap;
 
 #[derive(Debug)]
 pub struct ProgramRoot {
-    children: Vec<Box<AstreeNode>>
+    children : Vec<Box<AstreeNode>>,
+    fn_map : FnMap
 }
 
 
@@ -27,13 +29,18 @@ impl AstreeNode for ProgramRoot{
 }
 
 impl ProgramRoot{
-    pub fn new(children: Vec<Box<AstreeNode>>)->Self{
+    pub fn new()->Self{
         return ProgramRoot{
-            children: children
+            children : vec![],
+            fn_map : FnMap::new()
         }
     }
 
-    pub fn push(&mut self, node: Box<AstreeNode>){
+    pub fn push_statement(&mut self, node: Box<AstreeNode>){
         self.children.push(node);
+    }
+
+    pub fn put_fn(&mut self, node: Box<AstreeNode>){
+        self.fn_map.put(node);
     }
 }

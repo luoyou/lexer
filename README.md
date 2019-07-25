@@ -1,4 +1,15 @@
-lexer 分词算法
+# 一门语义化的渐进类型支持的动态语言
+- [x] 词法分析
+- [ ] 语法分析
+    - [x] 表达式分析
+    - [x] 赋值分析
+    - [ ] 函数分析
+
+---
+## 函数分析计划
+- [ ] fn_call_node 节点需要eval
+- [ ] fn_node 节点需要eval
+
 ---
 ## 符号系统
 ```
@@ -77,15 +88,16 @@ fn_statement : "fn" IDENTIFIER param_list block
 param_list   : "(" [params] ")"
 params       : param {"," param}
 param        : IDENTIFIER
-args         : expression {, expression}
-postfix      : "(" [args] ")"
 
 expression      : logical { ("&&" | "||") logical }
 logical         : comparison { ("==" | "!=" | ">" | ">=" | "<" | "<=") comparison }
 comparison      : term   { ("+" | "-") term }
 term            : factor { ("*" | "/" | "%") factor }
 
-factor     : NUMBER | STRING | BOOL | IDENTIFIER | "(" expression ")" | - factor | ! factor | (IDENTIFIER { postfix })
+factor     : NUMBER | STRING | BOOL | "(" expression ")" | - factor | ! factor | IDENTIFIER | (IDENTIFIER { postfix })
+postfix      : "(" [args] ")"
+args         : expression {, expression}
+
 
 
 # 第一版 基础：顺序，分支，循环

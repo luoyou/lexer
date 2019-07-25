@@ -9,13 +9,13 @@ use super::ast::not_bool_node::NotBoolNode;
 use super::ast::number_leaf::NumberLeaf;
 use super::ast::text_leaf::TextLeaf;
 use super::ast::op_leaf::OpLeaf;
-use super::ast::identidify_leaf::IdentidifyLeaf;
+use super::ast::identifier_leaf::IdentifierLeaf;
 use super::ast::statement_node::StatementNode;
 use super::ast::if_statement_node::IfStatementNode;
 use super::ast::while_statement_node::WhileStatementNode;
 use super::ast::block_node::BlockNode;
 use super::ast::fn_node::FnNode;
-use super::ast::param_list_node::ParamListNode;
+use super::ast::fn_call_node::FnCallNode;
 
 pub struct Parse{
     lexer: Lexer
@@ -34,50 +34,57 @@ impl Parse{
     }
 
     pub fn program(&mut self)->Box<AstreeNode>{
-        let mut program = ProgramRoot::new(vec![]);
+        let mut program = ProgramRoot::new();
         loop {
             if self.is_sep_token() {
                 self.token_sep();
             }else if self.is_end_token(){
                 break;
             }else if self.is_tokens(vec!["fn", "函数"]){
-                program.push(self.fn_statement());
+                program.put_fn(self.fn_statement());
             }else{
-                program.push(self.statement());
+                program.push_statement(self.statement());
             }
         }
         return Box::new(program);
     }
 
     fn statement(&mut self)->Box<AstreeNode>{
-        if self.is_token("if") || self.is_token("如果") {
+        if self.is_tokens(vec!["if", "如果"]) {
             return self.if_statement();
-        }else if self.is_token("while") || self.is_token("当"){
+        }else if self.is_tokens(vec!["while", "当"]){
             return self.while_statement();
         }else if self.next_is_token(1, "="){
-            let left = self.indentidify();
+            let left = self.identifier();
             self.token("=");
             let right = self.expression();
             let statement = StatementNode::new(vec![left, right]);
             return Box::new(statement);
         }else{
-            return self.expression();
+            let id = self.expression();
+            if !self.is_sep_token() && !self.is_end_token() {
+                let mut fn_call_vec = self.args();
+                fn_call_vec.insert(0, id);
+                return Box::new(FnCallNode::new(fn_call_vec));
+            }else{
+                return id;
+            }
         }
     }
 
     fn fn_statement(&mut self)->Box<AstreeNode>{
         self.tokens(vec!["fn", "函数"]);
-        let fn_name = self.indentidify();
+        let fn_name = self.identifier();
         let params_list = self.params_list();
         let block = self.block();
-        return Box::new(FnNode::new(vec![fn_name, params_list, block]));
+        return Box::new(FnNode::new(fn_name, params_list, block));
     }
 
-    fn params_list(&mut self)->Box<AstreeNode>{
+    fn params_list(&mut self)->Vec<Box<AstreeNode>>{
         self.token("(");
         let mut params_list:Vec<Box<AstreeNode>> = Vec::new();
-        while self.next_token_is_indentidify(0) {
-            params_list.push(self.indentidify());
+        while self.next_token_is_identifier(0) {
+            params_list.push(self.identifier());
             if self.is_token(",") {
                 self.token(",");
             }else{
@@ -85,7 +92,7 @@ impl Parse{
             }
         }
         self.token(")");
-        return Box::new(ParamListNode::new(params_list));
+        return params_list;
     }
 
     fn if_statement(&mut self)->Box<AstreeNode>{
@@ -123,10 +130,10 @@ impl Parse{
         return Box::new(BlockNode::new(statements));
     }
 
-    fn indentidify(&mut self)->Box<AstreeNode>{
+    fn identifier(&mut self)->Box<AstreeNode>{
         let token = self.lexer.read();
         if token.is_identidify() {
-            let id_leaf = IdentidifyLeaf::new(token);
+            let id_leaf = IdentifierLeaf::new(token);
             return Box::new(id_leaf);
         }else{
             println!("{:#?}", token);
@@ -218,15 +225,43 @@ impl Parse{
             if token.is_number() {
                 let num_leaf = NumberLeaf::new(token);
                 return Box::new(num_leaf);
-            }else if token.is_identidify(){
-                return Box::new(IdentidifyLeaf::new(token));
             }else if token.is_text(){
                 return Box::new(TextLeaf::new(token));
+            }else if token.is_identidify(){
+                let id = Box::new(IdentifierLeaf::new(token));
+                if self.is_token("(") {
+                    let mut fn_call_vec = self.postfix();
+                    fn_call_vec.insert(0, id);
+                    return Box::new(FnCallNode::new(fn_call_vec));
+                }else{
+                    return id;
+                }
             }else{
                 println!("{:#?}", token);
                 panic!("读取到的是未识别字符");
             }
         }
+    }
+
+    fn postfix(&mut self)->Vec<Box<AstreeNode>>{
+        self.token("(");
+        let mut args:Vec<Box<AstreeNode>> = Vec::new();
+        if !self.is_token(")") {
+            args = self.args();
+        }
+        self.token(")");
+        return args;
+
+    }
+
+    fn args(&mut self)->Vec<Box<AstreeNode>>{
+        let mut args: Vec<Box<AstreeNode>> = Vec::new();
+        args.push(self.expression());
+        while self.is_token(",") {
+            self.token(",");
+            args.push(self.expression());
+        }
+        return args;
     }
 
     /**
@@ -277,7 +312,7 @@ impl Parse{
         return token.get_text() == name;
     }
 
-    fn next_token_is_indentidify(&mut self, num: usize)->bool{
+    fn next_token_is_identifier(&mut self, num: usize)->bool{
         let token = self.lexer.peek(num);
         return token.is_identidify();
     }

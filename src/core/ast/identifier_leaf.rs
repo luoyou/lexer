@@ -4,12 +4,12 @@ use super::env::Env;
 use super::super::token::Token;
 
 #[derive(Debug)]
-pub struct IdentidifyLeaf{
+pub struct IdentifierLeaf{
     token: Token
 }
 
 
-impl AstreeNode for IdentidifyLeaf{
+impl AstreeNode for IdentifierLeaf{
     
     fn eval(&self, env: &mut Env)->Eval{
         let val = env.get(&self.token.get_text().to_string());
@@ -39,11 +39,15 @@ impl AstreeNode for IdentidifyLeaf{
     fn to_string(&self)->String{
         return self.token.get_text().to_string();
     }
+
+    fn get_id_name(&self)->String{
+        return self.token.get_text().to_string();
+    }
 }
 
-impl IdentidifyLeaf{
+impl IdentifierLeaf{
     pub fn new(token: Token)->Self{
-        IdentidifyLeaf{
+        IdentifierLeaf{
             token 
         }
     }

@@ -3,12 +3,12 @@ use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
-pub struct ParamListNode {
+pub struct FnCallNode {
     children: Vec<Box<AstreeNode>>
 }
 
 
-impl AstreeNode for ParamListNode{
+impl AstreeNode for FnCallNode{
 
     fn eval(&self, env: &mut Env)->Eval{
         Eval::TNil
@@ -19,9 +19,9 @@ impl AstreeNode for ParamListNode{
     }
 }
 
-impl ParamListNode{
+impl FnCallNode{
     pub fn new(children: Vec<Box<AstreeNode>>)->Self{
-        return ParamListNode{
+        return FnCallNode{
             children: children
         }
     }
