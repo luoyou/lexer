@@ -9,7 +9,7 @@ pub struct OpLeaf{
 }
 
 impl AstreeNode for OpLeaf{
-    fn eval(&self, _: &mut Env)->Eval{
+    fn eval(&mut self, _: &mut Env)->Eval{
         return Eval::TText(self.token.get_text().to_string());
     }
 

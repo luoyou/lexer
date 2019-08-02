@@ -11,7 +11,7 @@ pub struct IdentifierLeaf{
 
 impl AstreeNode for IdentifierLeaf{
     
-    fn eval(&self, env: &mut Env)->Eval{
+    fn eval(&mut self, env: &mut Env)->Eval{
         let val = env.get(&self.token.get_text().to_string());
         if val == Eval::TNil {
             panic!(self.token.get_text().to_string() + "变量未定义就直接使用");

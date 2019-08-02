@@ -1,4 +1,3 @@
-use super::env::Env;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Eval{  // 基础类型

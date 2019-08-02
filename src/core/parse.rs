@@ -10,12 +10,13 @@ use super::ast::number_leaf::NumberLeaf;
 use super::ast::text_leaf::TextLeaf;
 use super::ast::op_leaf::OpLeaf;
 use super::ast::identifier_leaf::IdentifierLeaf;
-use super::ast::statement_node::StatementNode;
+use super::ast::assign_statement_node::AssignStatementNode;
 use super::ast::if_statement_node::IfStatementNode;
 use super::ast::while_statement_node::WhileStatementNode;
 use super::ast::block_node::BlockNode;
 use super::ast::fn_node::FnNode;
 use super::ast::fn_call_node::FnCallNode;
+use super::ast::env::Env;
 
 pub struct Parse{
     lexer: Lexer
@@ -33,7 +34,7 @@ impl Parse{
         }
     }
 
-    pub fn program(&mut self)->Box<AstreeNode>{
+    pub fn program(&mut self, env: &mut Env)->Box<AstreeNode>{
         let mut program = ProgramRoot::new();
         loop {
             if self.is_sep_token() {
@@ -41,9 +42,9 @@ impl Parse{
             }else if self.is_end_token(){
                 break;
             }else if self.is_tokens(vec!["fn", "函数"]){
-                program.put_fn(self.fn_statement());
+                self.fn_statement(env);
             }else{
-                program.push_statement(self.statement());
+                program.push(self.statement());
             }
         }
         return Box::new(program);
@@ -58,7 +59,7 @@ impl Parse{
             let left = self.identifier();
             self.token("=");
             let right = self.expression();
-            let statement = StatementNode::new(vec![left, right]);
+            let statement = AssignStatementNode::new(vec![left, right]);
             return Box::new(statement);
         }else{
             let id = self.expression();
@@ -72,12 +73,15 @@ impl Parse{
         }
     }
 
-    fn fn_statement(&mut self)->Box<AstreeNode>{
+    /**
+     * 函数语句统一构建到env环境中
+     */
+    fn fn_statement(&mut self, env: &mut Env){
         self.tokens(vec!["fn", "函数"]);
         let fn_name = self.identifier();
         let params_list = self.params_list();
         let block = self.block();
-        return Box::new(FnNode::new(fn_name, params_list, block));
+        env.put_fn(Box::new(FnNode::new(fn_name, params_list, block)));
     }
 
     fn params_list(&mut self)->Vec<Box<AstreeNode>>{

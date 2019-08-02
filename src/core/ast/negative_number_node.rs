@@ -8,9 +8,9 @@ pub struct NegativeNumberNode{
 }
 
 impl AstreeNode for NegativeNumberNode{
-    fn eval(&self, env: &mut Env)->Eval{
+    fn eval(&mut self, env: &mut Env)->Eval{
         // let op     = self.children.get(0).unwrap().eval();
-        let number = self.children.get(1).unwrap().eval(env);
+        let number = self.children.pop().unwrap().eval(env);
         // println!("{:#?}", number);
         match number {
             Eval::TNumber(n) => Eval::TNumber(-n),

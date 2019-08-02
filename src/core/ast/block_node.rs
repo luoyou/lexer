@@ -10,11 +10,12 @@ pub struct BlockNode {
 
 impl AstreeNode for BlockNode{
 
-    fn eval(&self, env: &mut Env)->Eval{
-        for statement in self.get_children() {
-            statement.eval(env);
+    fn eval(&mut self, env: &mut Env)->Eval{
+        let mut val = Eval::TNil;
+        for statement in &mut self.children {
+            val = statement.eval(env)
         }
-        return Eval::TNil;
+        val
     }
 
     fn get_children(&self)->&Vec<Box<AstreeNode>>{

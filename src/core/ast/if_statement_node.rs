@@ -12,14 +12,14 @@ impl AstreeNode for IfStatementNode{
 
     /**
      */
-    fn eval(&self, env: &mut Env)->Eval{
-        let condition  = self.children.get(0).unwrap().eval(env);
-        let true_block = self.children.get(1).unwrap();
+    fn eval(&mut self, env: &mut Env)->Eval{
+        let condition  = self.children.remove(0).eval(env);
+        let mut true_block = self.children.remove(0);
         if condition == Eval::TBool(true) {
             true_block.eval(env);
         }else{
-            if self.children.len() == 3 {
-                let false_block = self.children.get(2).unwrap();
+            if self.children.len() == 1 { // 已经去掉判断项和true项，所以如果还有false项，那么数组的长度应该为1
+                let mut false_block = self.children.remove(0);
                 false_block.eval(env);
             }
         }

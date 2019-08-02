@@ -11,9 +11,9 @@ pub struct NotBoolNode{
 }
 
 impl AstreeNode for NotBoolNode{
-    fn eval(&self, env: &mut Env)->Eval{
+    fn eval(&mut self, env: &mut Env)->Eval{
         // let op     = self.children.get(0).unwrap().eval();
-        let val = self.children.get(1).unwrap().eval(env);
+        let val = self.children.pop().unwrap().eval(env);
         // println!("{:#?}", number);
         match val {
             Eval::TBool(n) => Eval::TBool(!n),
