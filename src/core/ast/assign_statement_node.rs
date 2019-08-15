@@ -13,8 +13,9 @@ pub struct AssignStatementNode {
 impl AstreeNode for AssignStatementNode{
 
     fn eval(&mut self, env: &mut Env)->Eval{
-        let right = self.children.pop().unwrap().eval(env);
-        let left  = self.children.pop().unwrap().to_string();
+        // println!("{:#?}", self.children);   
+        let left  = self.children[0].to_string();
+        let right = self.children[1].eval(env);
         env.put(left, right);
         return Eval::TNil;
     }

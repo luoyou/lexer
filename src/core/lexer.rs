@@ -35,7 +35,7 @@ impl Lexer{
     pub fn read(&mut self)->Token{
         if self.fill_queue(0){
             return self.keyword_queue.remove(0);
-            // let xxx = self.keyword_queue.pop().unwrap();
+            // let xxx = self.keyword_queue.remove(0);
             // println!("{:#?}", xxx);
             // return xxx;
         }else{

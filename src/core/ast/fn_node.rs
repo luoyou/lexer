@@ -16,11 +16,8 @@ pub struct FnNode {
 
 impl AstreeNode for FnNode{
     
-    fn call(&mut self, params: &mut Vec<Eval>, env: &mut Env)->Eval{
-        for (index, param) in self.param_list.iter().enumerate() {
-            env.put_fn_val(self.get_id_name(), param.get_id_name(), params.remove(index));
-        }
-        self.block.eval(env)
+    fn call(&mut self)->(Vec<Box<AstreeNode>>, Box<AstreeNode>){
+        return (self.param_list, self.block);
     }
 
     /**

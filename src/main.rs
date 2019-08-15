@@ -40,6 +40,7 @@ fn test_ast_parse(file_path: &str){
     let mut env = Env::new();
     let mut ast = parse.program(&mut env);
     println!("语法分析结果：{:#?}", ast.eval(&mut env));
+    // println!("抽象语法树：{:#?}", ast);
     // println!("语法分析结果：{:#?}", ast);
     println!("上下文变量：{:#?}", env);
 }

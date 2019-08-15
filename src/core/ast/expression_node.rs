@@ -11,10 +11,9 @@ pub struct ExpressionNode {
 impl AstreeNode for ExpressionNode{
 
     fn eval(&mut self, env: &mut Env)->Eval{
-        println!("{:#?}", self.children);
-        let left  = self.children.remove(0).eval(env);
-        let op    = self.children.remove(0).eval(env);
-        let right = self.children.remove(0).eval(env);
+        let left  = self.children[0].eval(env);
+        let op    = self.children[1].eval(env);
+        let right = self.children[2].eval(env);
         op.cal(left, right)
     }
 

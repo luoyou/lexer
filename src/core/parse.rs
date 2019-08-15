@@ -51,11 +51,11 @@ impl Parse{
     }
 
     fn statement(&mut self)->Box<AstreeNode>{
-        if self.is_tokens(vec!["if", "如果"]) {
+        if self.is_tokens(vec!["if", "如果"]) { // 判断语句
             return self.if_statement();
-        }else if self.is_tokens(vec!["while", "当"]){
+        }else if self.is_tokens(vec!["while", "当"]){ // 循环语句
             return self.while_statement();
-        }else if self.next_is_token(1, "="){
+        }else if self.next_is_token(1, "="){ // 赋值语句
             let left = self.identifier();
             self.token("=");
             let right = self.expression();
@@ -63,10 +63,9 @@ impl Parse{
             return Box::new(statement);
         }else{
             let id = self.expression();
-            if !self.is_sep_token() && !self.is_end_token() {
-                let mut fn_call_vec = self.args();
-                fn_call_vec.insert(0, id);
-                return Box::new(FnCallNode::new(fn_call_vec));
+            if !self.is_sep_token() && !self.is_end_token() { // 如果仅随其后的不是行分隔符或结束符，那么就尝试进行函数调用
+                let fn_call_vec = self.args();
+                return Box::new(FnCallNode::new(id, fn_call_vec));
             }else{
                 return id;
             }
@@ -234,9 +233,8 @@ impl Parse{
             }else if token.is_identidify(){
                 let id = Box::new(IdentifierLeaf::new(token));
                 if self.is_token("(") {
-                    let mut fn_call_vec = self.postfix();
-                    fn_call_vec.insert(0, id);
-                    return Box::new(FnCallNode::new(fn_call_vec));
+                    let fn_call_vec = self.postfix();
+                    return Box::new(FnCallNode::new(id, fn_call_vec));
                 }else{
                     return id;
                 }

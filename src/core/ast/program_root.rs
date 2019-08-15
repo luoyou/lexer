@@ -16,7 +16,7 @@ impl AstreeNode for ProgramRoot{
     fn eval(&mut self, env: &mut Env)->Eval{
         for child in &mut self.children{
             child.eval(env);
-        } 
+        }
         return Eval::TNil;
     }
 

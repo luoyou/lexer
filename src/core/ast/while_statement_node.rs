@@ -14,11 +14,9 @@ impl AstreeNode for WhileStatementNode{
      *
      */
     fn eval(&mut self, env: &mut Env)->Eval{
-        let mut condition  = self.children.remove(0);
-        let mut block = self.children.remove(0);
         loop {
-            if condition.eval(env) == Eval::TBool(true) {
-                block.eval(env);
+            if self.children[0].eval(env) == Eval::TBool(true) {
+                self.children[1].eval(env);
             }else{
                 break;
             }

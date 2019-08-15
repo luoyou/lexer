@@ -8,7 +8,7 @@ pub trait AstreeNode: Debug{
         panic!("本类型不支持求值")
     }
 
-    fn call(&mut self, _: &mut Vec<Eval>, _: &mut Env)->Eval{
+    fn call(&mut self)->(Vec<Box<AstreeNode>>, Box<AstreeNode>){
         panic!("本类型不支持调用")
     }
 
