@@ -1,6 +1,4 @@
 use super::ast_node::AstNode;
-use super::eval::Eval;
-use super::env::Env;
 
 /**
  * 尝试不用children构建语法树，以简化语法树的节点数量

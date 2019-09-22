@@ -2,10 +2,10 @@
 pub enum TokenType{
     Nothing,    // 空关键词
     Keyword,    // 关键字
-    Identidify, // 标识符
+    Identify, // 标识符
     Text,       // 文本（字符串）
     Number,     // 数字类型
-    Separater,  // 行结束符
+    Separator,  // 行结束符
     End         // 文件结束符
 }
 
@@ -60,9 +60,9 @@ impl Token {
     /**
      * 是分隔符（）
      */
-    pub fn is_serarater(&self)->bool{
+    pub fn is_separator(&self)->bool{
         match self.token_type {
-            TokenType::Separater => true,
+            TokenType::Separator => true,
             _ => false
         }
     }
@@ -87,10 +87,10 @@ impl Token {
         match self.token_type {
             TokenType::Nothing => "空单词",
             TokenType::Keyword => "关键字",
-            TokenType::Identidify => "标识符",
+            TokenType::Identify => "标识符",
             TokenType::Number => "整数",
             TokenType::Text => "文本",
-            TokenType::Separater => "行结束符",
+            TokenType::Separator => "行结束符",
             TokenType::End => "文件结束",
         }
     }
@@ -108,9 +108,9 @@ impl Token {
     /**
      * 是标识符token
      */
-    pub fn is_identidify(&self)->bool{
+    pub fn is_identify(&self)->bool{
         match self.token_type {
-            TokenType::Identidify => true,
+            TokenType::Identify => true,
             _ => false
         }
     }

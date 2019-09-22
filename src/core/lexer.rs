@@ -83,7 +83,7 @@ impl Lexer{
         if c == None {  // 返回第0行，说明文件已经读取结束（文件内从第一行开始）
             return Token::end();
         } else if c.unwrap() == '\n' || c.unwrap() == ';'{
-            return Token::new(self.cur_line_num, c.unwrap().to_string(), TokenType::Separater);
+            return Token::new(self.cur_line_num, c.unwrap().to_string(), TokenType::Separator);
         } else if c.unwrap() == '/'{
             word.push(c.unwrap());
             c = self.get_char();
@@ -166,7 +166,7 @@ impl Lexer{
         if KEYWORDS.contains(&&*word){
             return Token::new(self.cur_line_num, word, TokenType::Keyword);    
         }else{
-            return Token::new(self.cur_line_num, word, TokenType::Identidify);
+            return Token::new(self.cur_line_num, word, TokenType::Identify);
         }
     }
 

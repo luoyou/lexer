@@ -135,7 +135,7 @@ impl Parse{
 
     fn identifier(&mut self)->Box<AstNode>{
         let token = self.lexer.read();
-        if token.is_identidify() {
+        if token.is_identify() {
             let id_leaf = IdentifierLeaf::new(token);
             return Box::new(id_leaf);
         }else{
@@ -230,7 +230,7 @@ impl Parse{
                 return Box::new(num_leaf);
             }else if token.is_text(){
                 return Box::new(TextLeaf::new(token));
-            }else if token.is_identidify(){
+            }else if token.is_identify(){
                 let id = Box::new(IdentifierLeaf::new(token));
                 if self.is_token("(") {
                     let fn_call_vec = self.postfix();
@@ -316,7 +316,7 @@ impl Parse{
 
     fn next_token_is_identifier(&mut self, num: usize)->bool{
         let token = self.lexer.peek(num);
-        return token.is_identidify();
+        return token.is_identify();
     }
 
     /**
@@ -324,7 +324,7 @@ impl Parse{
      */
     fn is_sep_token(&mut self)->bool{
         let token = self.lexer.peek(0);
-        return token.is_serarater();
+        return token.is_separator();
     }
 
     /**
@@ -332,7 +332,7 @@ impl Parse{
      */
     fn token_sep(&mut self){
         let token = self.lexer.read();
-        if !token.is_serarater() {
+        if !token.is_separator() {
             panic!(token.get_text().to_string() + "不是 \n ; 或文件结束符");
         }
     }
