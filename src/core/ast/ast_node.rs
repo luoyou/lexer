@@ -3,12 +3,12 @@ use super::eval::Eval;
 use super::env::Env;
 
 
-pub trait AstreeNode: Debug{
+pub trait AstNode: Debug{
     fn eval(&mut self, _: &mut Env)->Eval{
         panic!("本类型不支持求值")
     }
 
-    fn call(&mut self)->(Vec<Box<AstreeNode>>, Box<AstreeNode>){
+    fn call(&mut self)->(&Vec<Box<AstNode>>, &mut Box<AstNode>){
         panic!("本类型不支持调用")
     }
 
@@ -25,7 +25,7 @@ pub trait AstreeNode: Debug{
         panic!("该类型不支持获取标识名");
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>;
+    fn get_children(&self)->&Vec<Box<AstNode>>;
 
     fn location(&self)->String{
         let nodes = self.get_children();

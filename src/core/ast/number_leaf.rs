@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::super::token::Token;
 use super::env::Env;
@@ -9,12 +9,12 @@ pub struct NumberLeaf{
 }
 
 
-impl AstreeNode for NumberLeaf{
+impl AstNode for NumberLeaf{
     fn eval(&mut self, _: &mut Env)->Eval{
         return Eval::TNumber(self.token.get_text().parse().unwrap());
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("数字没有子节点")
     }
 

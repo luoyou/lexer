@@ -1,14 +1,14 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
 pub struct ExpressionNode {
-    children: Vec<Box<AstreeNode>>
+    children: Vec<Box<AstNode>>
 }
 
 
-impl AstreeNode for ExpressionNode{
+impl AstNode for ExpressionNode{
 
     fn eval(&mut self, env: &mut Env)->Eval{
         let left  = self.children[0].eval(env);
@@ -17,13 +17,13 @@ impl AstreeNode for ExpressionNode{
         op.cal(left, right)
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         return &self.children;
     }
 }
 
 impl ExpressionNode{
-    pub fn new(children: Vec<Box<AstreeNode>>)->Self{
+    pub fn new(children: Vec<Box<AstNode>>)->Self{
         return ExpressionNode{
             children: children
         }

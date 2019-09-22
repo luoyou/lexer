@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 use super::super::token::Token;
@@ -9,7 +9,7 @@ pub struct IdentifierLeaf{
 }
 
 
-impl AstreeNode for IdentifierLeaf{
+impl AstNode for IdentifierLeaf{
     
     fn eval(&mut self, env: &mut Env)->Eval{
         let val = env.get(&self.token.get_text().to_string());
@@ -20,7 +20,7 @@ impl AstreeNode for IdentifierLeaf{
         }
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("标识符下没有子节点")
     }
 

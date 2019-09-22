@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::super::token::Token;
 use super::env::Env;
@@ -8,12 +8,12 @@ pub struct OpLeaf{
     token: Token
 }
 
-impl AstreeNode for OpLeaf{
+impl AstNode for OpLeaf{
     fn eval(&mut self, _: &mut Env)->Eval{
         return Eval::TText(self.token.get_text().to_string());
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("操作符下没有子节点")
     }
 

@@ -1,26 +1,27 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
 pub struct ProgramRoot {
-    children : Vec<Box<AstreeNode>>
+    children : Vec<Box<AstNode>>
 }
 
 
-impl AstreeNode for ProgramRoot{
+impl AstNode for ProgramRoot{
 
     /**
      * 从根节点进行求值
      */
     fn eval(&mut self, env: &mut Env)->Eval{
+        let mut val = Eval::TNil;
         for child in &mut self.children{
-            child.eval(env);
+            val = child.eval(env);
         }
-        return Eval::TNil;
+        val
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         return &self.children;
     }
     
@@ -33,7 +34,7 @@ impl ProgramRoot{
         }
     }
 
-    pub fn push(&mut self, node: Box<AstreeNode>){
+    pub fn push(&mut self, node: Box<AstNode>){
         self.children.push(node);
     }
 }

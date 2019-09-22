@@ -1,13 +1,13 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
 pub struct NegativeNumberNode{
-    children: Vec<Box<AstreeNode>>
+    children: Vec<Box<AstNode>>
 }
 
-impl AstreeNode for NegativeNumberNode{
+impl AstNode for NegativeNumberNode{
     fn eval(&mut self, env: &mut Env)->Eval{
         // let op     = self.children.get(0).unwrap().eval();
         let number = self.children.pop().unwrap().eval(env);
@@ -18,12 +18,12 @@ impl AstreeNode for NegativeNumberNode{
         }
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         return &self.children;
     }
 }
 impl NegativeNumberNode{
-    pub fn new(children: Vec<Box<AstreeNode>>)->Self{
+    pub fn new(children: Vec<Box<AstNode>>)->Self{
         NegativeNumberNode{
             children: children
         }

@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::super::token::Token;
 use super::env::Env;
@@ -9,12 +9,12 @@ pub struct TextLeaf{
 }
 
 
-impl AstreeNode for TextLeaf{
+impl AstNode for TextLeaf{
     fn eval(&mut self, _: &mut Env)->Eval{
         return Eval::TText(self.token.get_text().to_string());
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("文本类型没有子节点")
     }
 

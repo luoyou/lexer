@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
@@ -7,26 +7,27 @@ use super::env::Env;
  */
 #[derive(Debug)]
 pub struct AssignStatementNode {
-    children: Vec<Box<AstreeNode>>,
+    children: Vec<Box<AstNode>>,
 }
 
-impl AstreeNode for AssignStatementNode{
+impl AstNode for AssignStatementNode{
 
     fn eval(&mut self, env: &mut Env)->Eval{
-        // println!("{:#?}", self.children);   
+        // println!("{:#?}", self.children);
         let left  = self.children[0].to_string();
         let right = self.children[1].eval(env);
+        // println!("{:#?}", right);
         env.put(left, right);
         return Eval::TNil;
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         return &self.children;
     }
 
 }
 impl AssignStatementNode{
-    pub fn new(children: Vec<Box<AstreeNode>>)->Self{
+    pub fn new(children: Vec<Box<AstNode>>)->Self{
         return AssignStatementNode{
             children: children
         }

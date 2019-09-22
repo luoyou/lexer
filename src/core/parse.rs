@@ -1,6 +1,6 @@
 use super::lexer::Lexer;
 
-use super::ast::astree::AstreeNode;
+use super::ast::ast_node::AstNode;
 use super::ast::program_root::ProgramRoot;
 use super::ast::expression_node::ExpressionNode;
 use super::ast::negative_number_node::NegativeNumberNode;
@@ -34,7 +34,7 @@ impl Parse{
         }
     }
 
-    pub fn program(&mut self, env: &mut Env)->Box<AstreeNode>{
+    pub fn program(&mut self, env: &mut Env)->Box<AstNode>{
         let mut program = ProgramRoot::new();
         loop {
             if self.is_sep_token() {
@@ -50,7 +50,7 @@ impl Parse{
         return Box::new(program);
     }
 
-    fn statement(&mut self)->Box<AstreeNode>{
+    fn statement(&mut self)->Box<AstNode>{
         if self.is_tokens(vec!["if", "如果"]) { // 判断语句
             return self.if_statement();
         }else if self.is_tokens(vec!["while", "当"]){ // 循环语句
@@ -83,9 +83,9 @@ impl Parse{
         env.put_fn(Box::new(FnNode::new(fn_name, params_list, block)));
     }
 
-    fn params_list(&mut self)->Vec<Box<AstreeNode>>{
+    fn params_list(&mut self)->Vec<Box<AstNode>>{
         self.token("(");
-        let mut params_list:Vec<Box<AstreeNode>> = Vec::new();
+        let mut params_list:Vec<Box<AstNode>> = Vec::new();
         while self.next_token_is_identifier(0) {
             params_list.push(self.identifier());
             if self.is_token(",") {
@@ -98,9 +98,9 @@ impl Parse{
         return params_list;
     }
 
-    fn if_statement(&mut self)->Box<AstreeNode>{
+    fn if_statement(&mut self)->Box<AstNode>{
         self.tokens(vec!["if", "如果"]);
-        let mut statements: Vec<Box<AstreeNode>> = Vec::new();
+        let mut statements: Vec<Box<AstNode>> = Vec::new();
         statements.push(self.expression());
         statements.push(self.block()); 
         if self.is_token("else") || self.is_token("否则") {
@@ -110,16 +110,16 @@ impl Parse{
         return Box::new(IfStatementNode::new(statements));
     }
 
-    fn while_statement(&mut self)->Box<AstreeNode>{
+    fn while_statement(&mut self)->Box<AstNode>{
         self.tokens(vec!["while", "当"]);
         let expr  = self.expression();
         let block = self.block();
         return Box::new(WhileStatementNode::new(vec![expr, block]));
     }
 
-    fn block(&mut self)->Box<AstreeNode>{
+    fn block(&mut self)->Box<AstNode>{
         self.token("{");
-        let mut statements: Vec<Box<AstreeNode>> = Vec::new();
+        let mut statements: Vec<Box<AstNode>> = Vec::new();
         loop {
             if self.is_token("}") {
                 self.token("}");
@@ -133,7 +133,7 @@ impl Parse{
         return Box::new(BlockNode::new(statements));
     }
 
-    fn identifier(&mut self)->Box<AstreeNode>{
+    fn identifier(&mut self)->Box<AstNode>{
         let token = self.lexer.read();
         if token.is_identidify() {
             let id_leaf = IdentifierLeaf::new(token);
@@ -144,7 +144,7 @@ impl Parse{
         }
     }
 
-    fn expression(&mut self)->Box<AstreeNode>{
+    fn expression(&mut self)->Box<AstNode>{
         let mut left = self.logical();
         // println!("表达式：{:#?}", left);
         while self.is_tokens(vec!["&&" , "||"]) {
@@ -158,7 +158,7 @@ impl Parse{
         return left;
     }
 
-    fn logical(&mut self)->Box<AstreeNode>{
+    fn logical(&mut self)->Box<AstNode>{
         let mut left = self.comparison();
         // println!("表达式：{:#?}", left);
         while self.is_tokens(vec!["==", ">", ">=", "<", "<="]) {
@@ -172,7 +172,7 @@ impl Parse{
         return left;
     }
 
-    fn comparison(&mut self)->Box<AstreeNode>{
+    fn comparison(&mut self)->Box<AstNode>{
         let mut left = self.term();
         while self.is_tokens(vec!["+", "-"]) {
             let op = OpLeaf::new(self.lexer.read());
@@ -185,7 +185,7 @@ impl Parse{
         return left;
     }
 
-    fn term(&mut self)->Box<AstreeNode>{
+    fn term(&mut self)->Box<AstNode>{
         let mut left = self.factor();
         // println!("项：{:#?}", left);
         while self.is_token("*") || self.is_token("/") || self.is_token("%") {
@@ -199,7 +199,7 @@ impl Parse{
         return left;
     }
 
-    fn factor(&mut self)->Box<AstreeNode>{
+    fn factor(&mut self)->Box<AstNode>{
         if self.is_token("(") {
             self.token("(");
             let e = self.expression();
@@ -245,9 +245,9 @@ impl Parse{
         }
     }
 
-    fn postfix(&mut self)->Vec<Box<AstreeNode>>{
+    fn postfix(&mut self)->Vec<Box<AstNode>>{
         self.token("(");
-        let mut args:Vec<Box<AstreeNode>> = Vec::new();
+        let mut args:Vec<Box<AstNode>> = Vec::new();
         if !self.is_token(")") {
             args = self.args();
         }
@@ -256,8 +256,8 @@ impl Parse{
 
     }
 
-    fn args(&mut self)->Vec<Box<AstreeNode>>{
-        let mut args: Vec<Box<AstreeNode>> = Vec::new();
+    fn args(&mut self)->Vec<Box<AstNode>>{
+        let mut args: Vec<Box<AstNode>> = Vec::new();
         args.push(self.expression());
         while self.is_token(",") {
             self.token(",");

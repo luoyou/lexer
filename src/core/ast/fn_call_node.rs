@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
@@ -7,12 +7,12 @@ use super::env::Env;
  */
 #[derive(Debug)]
 pub struct FnCallNode {
-    fn_name: Box<AstreeNode>,
-    params: Vec<Box<AstreeNode>>
+    fn_name: Box<AstNode>,
+    params: Vec<Box<AstNode>>
 }
 
 
-impl AstreeNode for FnCallNode{
+impl AstNode for FnCallNode{
 
     fn eval(&mut self, env: &mut Env)->Eval{
         let mut params: Vec<Eval> = Vec::new();
@@ -22,7 +22,7 @@ impl AstreeNode for FnCallNode{
         env.fn_call(self.fn_name.get_id_name(), &mut params)
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("此节点暂不支持获取子节点");
     }
 
@@ -32,7 +32,7 @@ impl AstreeNode for FnCallNode{
 }
 
 impl FnCallNode{
-    pub fn new(fn_name: Box<AstreeNode>, params: Vec<Box<AstreeNode>>)->Self{
+    pub fn new(fn_name: Box<AstNode>, params: Vec<Box<AstNode>>)->Self{
         return FnCallNode{
             fn_name,
             params

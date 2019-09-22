@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 use super::super::token::Token;
@@ -9,7 +9,7 @@ pub struct BoolLeaf{
 }
 
 
-impl AstreeNode for BoolLeaf{
+impl AstNode for BoolLeaf{
     
     fn eval(&mut self, _: &mut Env)->Eval{
         let val = self.token.get_text();
@@ -20,7 +20,7 @@ impl AstreeNode for BoolLeaf{
         }
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("逻辑值下没有子节点")
     }
 

@@ -1,14 +1,14 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
 #[derive(Debug)]
 pub struct WhileStatementNode {
-    children: Vec<Box<AstreeNode>>
+    children: Vec<Box<AstNode>>
 }
 
 
-impl AstreeNode for WhileStatementNode{
+impl AstNode for WhileStatementNode{
 
     /**
      *
@@ -24,13 +24,13 @@ impl AstreeNode for WhileStatementNode{
         return Eval::TNil;
     }
 
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         return &self.children;
     }
 }
 
 impl WhileStatementNode{
-    pub fn new(children: Vec<Box<AstreeNode>>)->Self{
+    pub fn new(children: Vec<Box<AstNode>>)->Self{
         return WhileStatementNode{
             children: children
         }

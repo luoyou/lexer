@@ -1,4 +1,4 @@
-use super::astree::AstreeNode;
+use super::ast_node::AstNode;
 use super::eval::Eval;
 use super::env::Env;
 
@@ -8,22 +8,22 @@ use super::env::Env;
  */
 #[derive(Debug)]
 pub struct FnNode {
-    identifier: Box<AstreeNode>,
-    param_list: Vec<Box<AstreeNode>>,
-    block: Box<AstreeNode>
+    identifier: Box<AstNode>,
+    param_list: Vec<Box<AstNode>>,
+    block: Box<AstNode>
 }
 
 
-impl AstreeNode for FnNode{
+impl AstNode for FnNode{
     
-    fn call(&mut self)->(Vec<Box<AstreeNode>>, Box<AstreeNode>){
-        return (self.param_list, self.block);
+    fn call(&mut self)->(&Vec<Box<AstNode>>, &mut Box<AstNode>){
+        return (&self.param_list, &mut self.block);
     }
 
     /**
      * 因为该方法没有实现get_children, 所以需要实现 to_string
      */
-    fn get_children(&self)->&Vec<Box<AstreeNode>>{
+    fn get_children(&self)->&Vec<Box<AstNode>>{
         panic!("函数没有子类型")
     }
 
@@ -33,7 +33,7 @@ impl AstreeNode for FnNode{
 }
 
 impl FnNode{
-    pub fn new(identifier: Box<AstreeNode>, param_list: Vec<Box<AstreeNode>>, block: Box<AstreeNode>)->Self{
+    pub fn new(identifier: Box<AstNode>, param_list: Vec<Box<AstNode>>, block: Box<AstNode>)->Self{
         return FnNode{
             identifier,
             param_list,
