@@ -33,6 +33,7 @@ impl Eval{
         }
     }
 
+
     fn get_number_val(&self)->&i32{
         match self {
             Eval::TNumber(val) => val,
@@ -43,7 +44,14 @@ impl Eval{
     fn get_bool_val(&self)->bool{
         match self {
             Eval::TBool(val) => *val,
-            _ => panic!("数值错误")
+            _ => panic!("该类型非逻辑值")
+        }
+    }
+
+    fn get_text_val(&self)->&str{
+        match self {
+            Eval::TText(val) => val,
+            _ => panic!("该类型不是文本值")
         }
     }
 

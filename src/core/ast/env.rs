@@ -65,7 +65,9 @@ impl Env{
      * 进行函数调用
      */
     pub fn fn_call(&mut self, fn_name: String, param_list: &mut Vec<Eval>)->Eval{
-        if self.fn_map.contains_key(&fn_name) { // 用户函数表查找
+        if sys_fn_exist(&*fn_name) {
+            sys_fn_call(fn_name, param_list)
+        }else if self.fn_map.contains_key(&fn_name) { // 用户函数表查找
             self.fn_stack.push(fn_name.clone());
             let fn_node_rc = self.fn_map.get_mut(&fn_name).unwrap().clone();
             let mut fn_node = (*fn_node_rc).borrow_mut();
