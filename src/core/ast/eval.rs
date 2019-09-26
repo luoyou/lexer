@@ -33,6 +33,12 @@ impl Eval{
         }
     }
 
+    pub fn connect(&self, right: &Eval)->Eval{
+        let text = self.get_text_val();
+        let mut text_str = text.to_string();
+        text_str.push_str(right.get_text_val());
+        Eval::TText(text_str)
+    }
 
     fn get_number_val(&self)->&i32{
         match self {

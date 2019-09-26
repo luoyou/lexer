@@ -66,14 +66,18 @@ impl Env{
      */
     pub fn fn_call(&mut self, fn_name: String, param_list: &mut Vec<Eval>)->Eval{
         if sys_fn_exist(&*fn_name) {
-            sys_fn_call(fn_name, param_list)
+            return sys_fn_call(fn_name, param_list);
+            // let xxx = sys_fn_call(fn_name, param_list);
+            // println!("{:#?}", xxx);            
+            // return xxx;
         }else if self.fn_map.contains_key(&fn_name) { // 用户函数表查找
             self.fn_stack.push(fn_name.clone());
             let fn_node_rc = self.fn_map.get_mut(&fn_name).unwrap().clone();
             let mut fn_node = (*fn_node_rc).borrow_mut();
             let (params, block) = fn_node.call();
             for (index, param) in params.iter().enumerate() {
-                self.put(param.get_id_name(), param_list.remove(index));
+                // println!("{:#?}", index);
+                self.put(param.get_id_name(), param_list.remove(0));
             }
             let val = block.eval(self);
             self.fn_stack.pop(); // 退出当前函数的作用域栈，todo 退出之后还要清空该函数产生的作用域
