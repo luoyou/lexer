@@ -4,14 +4,15 @@ use super::env::Env;
 
 #[derive(Debug)]
 pub struct NegativeNumberNode{
-    children: Vec<Box<AstNode>>
+    val: Box<AstNode>
 }
 
 impl AstNode for NegativeNumberNode{
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         // let op     = self.children.get(0).unwrap().eval();
-        let number = self.children.pop().unwrap().eval(env);
+        // let number = self.children.pop().unwrap().eval(env);
         // println!("{:#?}", number);
+        let number = self.val.eval(env);
         match number {
             Eval::TNumber(n) => Eval::TNumber(-n),
             _ => panic!("数字异常")
@@ -19,13 +20,13 @@ impl AstNode for NegativeNumberNode{
     }
 
     fn get_children(&self)->&Vec<Box<AstNode>>{
-        return &self.children;
+        panic!("该类型下没有子节点")
     }
 }
 impl NegativeNumberNode{
-    pub fn new(children: Vec<Box<AstNode>>)->Self{
+    pub fn new(val: Box<AstNode>)->Self{
         NegativeNumberNode{
-            children: children
+            val: val
         }
     }
 }

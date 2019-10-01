@@ -151,6 +151,15 @@ impl Lexer{
             return self.lexer_text(Some('」'));
         }else if c.unwrap() == '『' {
             return self.lexer_text(Some('』'));
+        }else if c.unwrap() == '|' || c.unwrap() == '&' {
+            let next_c = self.get_char();
+            if c != next_c {
+                panic!("| 或 & 不合法");
+            }else{
+                word.push(c.unwrap());
+                word.push(next_c.unwrap());
+                return Token::new(self.cur_line_num, word, TokenType::Keyword);                
+            }
         }else{
             word.push(c.unwrap()); // 其他的情况，统一推入字符串
             loop{
@@ -170,6 +179,9 @@ impl Lexer{
         }
     }
 
+    /**
+     * 解析文本
+     */
     fn lexer_text(&mut self, end_char: Option<char>)->Token{
         let mut word = String::from("");
         loop {

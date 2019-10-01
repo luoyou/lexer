@@ -147,6 +147,7 @@ impl Parse{
     fn expression(&mut self)->Box<AstNode>{
         let mut left = self.logical();
         // println!("表达式：{:#?}", left);
+        // println!("下一个字符：{:#?}", self.lexer.peek(0));
         while self.is_tokens(vec!["&&" , "||"]) {
             let op = OpLeaf::new(self.lexer.read());
             let right = self.logical();
@@ -206,18 +207,14 @@ impl Parse{
             self.token(")");
             return e;
         }else if self.is_token("-"){
-            let op = OpLeaf::new(self.lexer.read());
+            self.token("-");
             let factor = self.factor();
-            let negative_node = NegativeNumberNode::new(
-                vec![Box::new(op), factor]
-            );
+            let negative_node = NegativeNumberNode::new(factor);
             return Box::new(negative_node);
         }else if self.is_token("!"){
-            let op = OpLeaf::new(self.lexer.read());
+            self.token("!");
             let factor = self.factor();
-            let negative_node = NotBoolNode::new(
-                vec![Box::new(op), factor]
-            );
+            let negative_node = NotBoolNode::new(factor);
             return Box::new(negative_node);
         }else if self.is_tokens(vec!["true", "false", "真", "假"]){
             let bool_leaf = BoolLeaf::new(self.lexer.read());

@@ -11,7 +11,7 @@ pub struct BoolLeaf{
 
 impl AstNode for BoolLeaf{
     
-    fn eval(&mut self, _: &mut Env)->Eval{
+    fn eval(&self, _: &mut Env)->Eval{
         let val = self.token.get_text();
         if val == "true" || val == "真" {
             return Eval::TBool(true);

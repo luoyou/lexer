@@ -10,7 +10,7 @@ pub struct ExpressionNode {
 
 impl AstNode for ExpressionNode{
 
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         let left  = self.children[0].eval(env);
         let op    = self.children[1].eval(env);
         let right = self.children[2].eval(env);

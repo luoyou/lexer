@@ -8,7 +8,7 @@
         - [ ] 函数作用域销毁
         - [ ] 系统默认函数
             - [x] 输出函数
-            - [ ] 字符串连接函数
+            - [x] 字符串连接函数
         - [ ] 闭包
     - [ ] 数组支持
     - [ ] 字典支持
@@ -83,8 +83,8 @@ return   返回
 # 函数支持
 program         : [statement | fn] (";" | EOL)
 statement       : expression [args] | IDENTIFIER = expression | if_statement | while_statement
-if_statement    : "if" expr block [ "else" block]
-while_statement : "while" expr block
+if_statement    : "if" expression block [ "else" block]
+while_statement : "while" expression block
 block           : "{" [statement] { (";" | EOL) [ statement ] } "}"
 
 fn_statement : "fn" IDENTIFIER param_list block

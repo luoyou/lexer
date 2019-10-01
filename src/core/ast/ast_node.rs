@@ -4,11 +4,11 @@ use super::env::Env;
 
 
 pub trait AstNode: Debug{
-    fn eval(&mut self, _: &mut Env)->Eval{
+    fn eval(&self, _: &mut Env)->Eval{
         panic!("本类型不支持求值")
     }
 
-    fn call(&mut self)->(&Vec<Box<AstNode>>, &mut Box<AstNode>){
+    fn call(&self)->(&Vec<Box<AstNode>>, &Box<AstNode>){
         panic!("本类型不支持调用")
     }
 

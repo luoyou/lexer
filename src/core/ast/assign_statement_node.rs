@@ -12,7 +12,7 @@ pub struct AssignStatementNode {
 
 impl AstNode for AssignStatementNode{
 
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         // println!("{:#?}", self.children);
         let left  = self.children[0].to_string();
         let right = self.children[1].eval(env);

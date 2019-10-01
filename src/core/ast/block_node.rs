@@ -10,9 +10,9 @@ pub struct BlockNode {
 
 impl AstNode for BlockNode{
 
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         let mut val = Eval::TNil;
-        for statement in &mut self.children {
+        for statement in &self.children {
             val = statement.eval(env)
         }
         val

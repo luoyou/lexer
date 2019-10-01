@@ -73,7 +73,7 @@ impl Env{
         }else if self.fn_map.contains_key(&fn_name) { // 用户函数表查找
             self.fn_stack.push(fn_name.clone());
             let fn_node_rc = self.fn_map.get_mut(&fn_name).unwrap().clone();
-            let mut fn_node = (*fn_node_rc).borrow_mut();
+            let fn_node = (*fn_node_rc).borrow();
             let (params, block) = fn_node.call();
             for (index, param) in params.iter().enumerate() {
                 // println!("{:#?}", index);

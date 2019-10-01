@@ -12,7 +12,7 @@ impl AstNode for IfStatementNode{
 
     /**
      */
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         let condition  = self.children[0].eval(env);
         if condition == Eval::TBool(true) {
             self.children[1].eval(env);

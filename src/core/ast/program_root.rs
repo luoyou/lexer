@@ -13,9 +13,9 @@ impl AstNode for ProgramRoot{
     /**
      * 从根节点进行求值
      */
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         let mut val = Eval::TNil;
-        for child in &mut self.children{
+        for child in &self.children{
             val = child.eval(env);
         }
         val

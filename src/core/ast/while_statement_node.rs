@@ -13,7 +13,7 @@ impl AstNode for WhileStatementNode{
     /**
      *
      */
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         loop {
             if self.children[0].eval(env) == Eval::TBool(true) {
                 self.children[1].eval(env);

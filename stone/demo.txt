@@ -20,9 +20,9 @@ if 逻1辑 {
 
 输出行(文本内容)
 
-test_text("名称", "世界")
+test_text "名称", "世界"
 
 函数 test_text(name, world){
     显示值 = 文本拼接(name, ": ", world)
-    输出行(显示值)
+    输出行 显示值
 }

@@ -14,9 +14,9 @@ pub struct FnCallNode {
 
 impl AstNode for FnCallNode{
 
-    fn eval(&mut self, env: &mut Env)->Eval{
+    fn eval(&self, env: &mut Env)->Eval{
         let mut params: Vec<Eval> = Vec::new();
-        for e in &mut self.params{
+        for e in &self.params{
             params.push(e.eval(env));
         }
         env.fn_call(self.fn_name.get_id_name(), &mut params)

@@ -14,8 +14,8 @@ pub struct FnNode {
 
 impl AstNode for FnNode{
     
-    fn call(&mut self)->(&Vec<Box<AstNode>>, &mut Box<AstNode>){
-        return (&self.param_list, &mut self.block);
+    fn call(&self)->(&Vec<Box<AstNode>>, &Box<AstNode>){
+        return (&self.param_list, &self.block);
     }
 
     /**
