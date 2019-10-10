@@ -14,6 +14,7 @@ impl AstNode for ExpressionNode{
         let left  = self.children[0].eval(env);
         let op    = self.children[1].eval(env);
         let right = self.children[2].eval(env);
+        // println!("{:#?},{:#?}", left, right);
         op.cal(left, right)
     }
 

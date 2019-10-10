@@ -31,11 +31,12 @@ impl Env{
         if  len == 0 {
             self.values.insert(key, val);
         }else{
-            let fn_name = &self.fn_stack[len - 1];
-            if !self.fn_scopes.contains_key(fn_name) {
+            let mut fn_name = self.fn_stack[len - 1].clone();
+            fn_name.push_str(&len.to_string());
+            if !self.fn_scopes.contains_key(&fn_name) {
                 self.fn_scopes.insert(fn_name.clone(), HashMap::new());
             }
-            self.fn_scopes.get_mut(fn_name).unwrap().insert(key, val);
+            self.fn_scopes.get_mut(&fn_name).unwrap().insert(key, val);
         }
     }
 
@@ -45,8 +46,9 @@ impl Env{
         if len == 0 {
             val = self.values.get(key);
         }else{
-            let fn_name = &self.fn_stack[len - 1];
-            val = self.fn_scopes[fn_name].get(key);
+            let mut fn_name = self.fn_stack[len - 1].clone();
+            fn_name.push_str(&len.to_string());
+            val = self.fn_scopes[&fn_name].get(key);
         }
         match val {
             Some(x) => x.clone(),
@@ -75,12 +77,17 @@ impl Env{
             let fn_node_rc = self.fn_map.get_mut(&fn_name).unwrap().clone();
             let fn_node = (*fn_node_rc).borrow();
             let (params, block) = fn_node.call();
+            // println!("{:#?}", param_list);
             for (index, param) in params.iter().enumerate() {
                 // println!("{:#?}", index);
                 self.put(param.get_id_name(), param_list.remove(0));
             }
             let val = block.eval(self);
-            self.fn_stack.pop(); // 退出当前函数的作用域栈，todo 退出之后还要清空该函数产生的作用域
+            // println!("函数结果：{:#?}", val);         
+            let scope_name = self.fn_stack.pop().unwrap(); // 退出当前函数的作用域栈，todo 退出之后还要清空该函数产生的作用域
+            // println!("{}", scope_name);
+            // println!("{:#?}", self.fn_scopes);
+            // self.fn_scopes.remove(&scope_name);
             return val;
         }else{
             panic!("函数".to_string() + &fn_name + "不存在")

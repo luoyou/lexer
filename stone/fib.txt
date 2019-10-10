@@ -1,9 +1,11 @@
 fn fib(num){
-    if num == 1 || num == 2 {
+    if num <= 2 {
         1
     }else{
         fib(num - 1) + fib(num - 2)
     }
 }
 
-输出 fib(3)
+输出 fib(10)
+
+// 1 1 2 3 5

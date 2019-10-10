@@ -12,8 +12,14 @@ impl AstNode for BlockNode{
 
     fn eval(&self, env: &mut Env)->Eval{
         let mut val = Eval::TNil;
+        // println!("{:#?}", self.children);
         for statement in &self.children {
-            val = statement.eval(env)
+            // println!("{:#?}", statement);
+            // println!("+++++++++++++++++++++++++++++++++++");
+            val = statement.eval(env);
+            // println!("{:#?}", val);
+            // println!("------------------------------------");
+
         }
         val
     }
